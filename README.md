@@ -8,9 +8,9 @@
 
 ## 🏛️ Overview
 
-This project implements the **Warm Terracotta Sanctuary** UI/UX design (from Figma / Stitch Auto-Layout Master) into a responsive, accessible, and interactive web application using semantic **HTML5**, modern **CSS3**, and **vanilla JavaScript**.
+This web platform implements the **Warm Terracotta Sanctuary** UI/UX design (Figma Auto-Layout Master, Node `187:2` and Mobile Node `187:1964`) into a production-grade, highly responsive, accessible, and interactive clinical screening interface using semantic **HTML5**, modern **CSS3**, and **vanilla JavaScript**.
 
-The aesthetic combines the dignity of a peer-reviewed academic publication with the gentle, reassuring warmth of biophilic healthcare spaces.
+The aesthetic integrates the academic rigor of an institutional research publication with the warm, reassuring dignity of biophilic healthcare spaces.
 
 ---
 
@@ -28,17 +28,17 @@ final q/
 
 ## 🎨 Design System: Warm Terracotta & Linen
 
-- **Terracotta & Sienna Accents (`#C2653E`, `#9A3412`, `#8A4500`):** Grounded earthy tones representing warmth and active focus.
-- **Linen & Sandstone (`#FAF6F0`, `#F3EDE2`):** Low-strain, paper-like background plane that eliminates sterile white glare.
-- **Deep Espresso (`#291E16`, `#1C140E`):** High-contrast typography for bilingual legibility.
+- **Terracotta & Sienna Accents (`#C2653E`, `#9A3412`, `#8A4500`):** Earthy grounding tones symbolizing emotional warmth and focus.
+- **Linen & Sandstone (`#FAF6F0`, `#F3EDE2`):** Low-strain, natural paper-like background that eliminates clinical glare.
+- **Deep Espresso (`#241812`, `#1C140E`):** High-contrast typography for bilingual legibility (strictly exceeding WCAG 2.1 AA ratios).
 - **Typography:**
-  - `Fraunces` & `Noto Serif Bengali` for serene editorial titles and quotes.
-  - `Outfit` & `Plus Jakarta Sans` for clean, readable form controls.
+  - `Fraunces` & `Noto Serif Bengali` for serene editorial titles, quotes, and research headings.
+  - `Outfit` & `Plus Jakarta Sans` for clean, readable form controls and numerical metrics.
   - `Material Symbols Outlined` for nature and mindful iconography.
 
 ---
 
-## 🧠 Clinical Modules & Instruments
+## 🧠 Clinical Modules & Instruments (All 54 Checkpoints)
 
 1. **Module A — Demographic & Background Information (A1–A7):** Age, Height, Weight, Sex, University Type, Living Arrangements, and Academic Year/Semester.
 2. **Module B — PHQ-9 Mindful Self-Inquiry (B1–B9):** Validated 9-item Patient Health Questionnaire scored dynamically from `0` to `27` with automatic clinical severity stratification:
@@ -49,29 +49,36 @@ final q/
    - `20–27`: Severe (তীব্র বিষণ্ণতা)
 3. **Module C — Academic Rhythms & CGPA Anxiety (C1–C8):** 5-point Likert scale measuring workload, examination stress, and academic satisfaction.
 4. **Module D — Future Horizons & AI Disruption (D1–D4):** Career certainty, economic anxiety, and perceptions of generative AI impact.
-5. **Module E — Daily Rhythms & Vitality Habits (E1–E8):** Sleep schedules, physical exercise, screen time, nutrition, and health history.
+5. **Module E — Health & Lifestyle Rhythms (E1–E8):** Sleep schedules, physical exercise, screen time, nutrition, and health history.
 6. **Module F — Multidimensional Scale of Perceived Social Support (MSPSS, F1–F12):** 7-point scale measuring support from Significant Others, Family, and Friends.
 7. **Module G — Environmental & Financial Stressors (G1–G6):** Critical life events, family income, financial stress, and study environment conditions.
 
 ---
 
-## ⚡ Interactive Features
+## ⚡ UI/UX & Interactive Engine Enhancements
 
-- **Pebble Button Radios:** Soft tactile selection with active state styling, keyboard accessibility, and state toggling.
-- **Real-Time PHQ-9 HUD:** Floating status badge in the bottom-right corner calculating and categorizing scores live as answers are selected.
-- **Garden Waypoints & Scroll-Spy:** Interactive top progression bar highlighting active modules as the user scrolls.
-- **Synthesized Ambient Soundscape:** Clickable courtyard rain soundscape generated via vanilla browser **Web Audio API** (432Hz filtered brown noise — zero external media required).
-- **Pause & Save Zen Seed:** Preserves form answers in browser `localStorage` and restores them upon reloading.
-- **Reflection Summary Modal:** Generates an anonymous cryptographic research token, summary scores, printable report view, JSON data export, and crisis helpline emergency contacts in Bangladesh (*Kaan Pete Roi: +8801779554391*, *333*).
+- **Real-Time Progress Tracking:** Sticky slim top progress bar with dynamic checkpoint completion percentages.
+- **Smart "Next Unanswered" Navigation:** Instantly scrolls to and pulses the next unanswered question.
+- **Tactile Pebble Micro-Interactions:** Haptic-feel radial ripple effect and active espresso elevation.
+- **Live Scoring Guide Linking:** Selecting a rating momentarily highlights the corresponding Likert scale column in the header guide.
+- **Floating Zen Session HUD:** Non-intrusive desktop pill featuring real-time PHQ-9 score, soundscape toggle, quick review, and scroll-to-top controls.
+- **Synthesized Ambient Soundscape:** Clickable courtyard rain soundscape generated via vanilla browser **Web Audio API** (432Hz harmonic drone + filtered pink noise with smooth exponential gain fading).
+- **Comprehensive Reflection Dashboard:**
+  - Visual PHQ-9 severity gauge meter.
+  - Perceived Social Support 3-subscale visual breakdown bars (Significant Other, Family, Friends).
+  - Cryptographic token generation (`VU-[hex]`) with one-click clipboard copy.
+  - JSON data export for researchers.
+  - 24/7 Bangladesh crisis support contacts (*Kaan Pete Roi: +8801779554391*, *National Health Center: 16263*).
+- **Accessibility (WCAG 2.1 AA):** Full keyboard navigation (Arrow keys, Space/Enter, Tab), proper `role="radiogroup"` / `role="radio"`, and `aria-checked` states.
+- **Session Auto-Save:** Automatically persists selections and inputs in browser `localStorage`.
 
 ---
 
 ## 🚀 How to Run
 
-1. Open `index.html` in any modern web browser (Chrome, Edge, Firefox, Safari).
+1. Open `index.html` directly in any modern web browser (Chrome, Edge, Firefox, Safari).
 2. Or serve locally with any HTTP server:
    ```powershell
-   # Using Python:
    python -m http.server 8000
    ```
    Then navigate to `http://localhost:8000`.

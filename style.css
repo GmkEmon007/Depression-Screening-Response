@@ -1,6 +1,6 @@
 /* ==========================================================================
    VU Research — Warm Terracotta Sanctuary
-   Figma Auto-Layout Master Design System
+   Figma Auto-Layout Master Design System & UI/UX Engine
    ========================================================================== */
 
 :root {
@@ -8,10 +8,16 @@
   --color-parchment: #F3EDE2;
   --color-linen-border: #E6DED1;
   --color-terracotta-accent: #8A4500;
+  --color-terracotta-primary: #C2653E;
   --color-terracotta-soft: #FBECE3;
   --color-espresso: #241812;
   --color-espresso-subtle: #524032;
   --color-espresso-text: #1C140E;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
 }
 
 body {
@@ -20,6 +26,7 @@ body {
   color: var(--color-espresso-text);
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
 }
 
 .font-serif-heading {
@@ -48,17 +55,31 @@ body {
   background: #BAA994;
 }
 
-/* Pebble Touch Interactions */
+/* Slim Top Progress Bar */
+#zen-progress-bar {
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: width;
+}
+
+/* Pebble Touch Interactions & Micro-Animations */
 .pebble-btn {
+  position: relative;
+  overflow: hidden;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
+  cursor: pointer;
+  outline: none;
 }
 .pebble-btn:hover {
   transform: translateY(-1.5px);
-  box-shadow: 0 4px 12px -2px rgba(41, 30, 22, 0.08);
+  border-color: #BAA994;
+  box-shadow: 0 4px 14px -2px rgba(41, 30, 22, 0.1);
 }
 .pebble-btn:active {
-  transform: translateY(0.5px) scale(0.985);
+  transform: translateY(0.5px) scale(0.98);
+}
+.pebble-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.35);
 }
 
 /* Active Pebble State (Figma Exact: Dark Espresso #241812) */
@@ -66,33 +87,87 @@ body {
   background-color: #241812 !important;
   color: #FFFFFF !important;
   border-color: #241812 !important;
-  box-shadow: 0 6px 18px -3px rgba(36, 24, 18, 0.28) !important;
+  box-shadow: 0 6px 18px -3px rgba(36, 24, 18, 0.32) !important;
 }
 .pebble-btn.active span,
 .pebble-btn.active p {
   color: #FFFFFF !important;
 }
 
+/* Ripple Effect */
+.pebble-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleAnimation 0.5s linear;
+  background-color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+@keyframes rippleAnimation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Card Answered Subtle State */
+.question-card {
+  transition: all 0.25s ease;
+}
+.question-card.answered {
+  border-color: #DD956C;
+  box-shadow: 0 4px 18px -4px rgba(221, 149, 108, 0.18), 0 2px 6px -1px rgba(41, 30, 22, 0.04);
+}
+.question-card.answered .answered-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+.answered-badge {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Highlighted Unanswered Pulse */
+@keyframes unansweredPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.4);
+    border-color: #C2410C;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(194, 65, 12, 0);
+    border-color: #DD956C;
+  }
+}
+.highlight-unanswered {
+  animation: unansweredPulse 1.2s ease-in-out 3;
+}
+
 /* Active Highlight for Scoring Guide */
+.guide-card {
+  transition: all 0.25s ease;
+}
 .guide-card.active {
   background-color: #8A4500 !important;
   color: #FFFFFF !important;
   border-color: #8A4500 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(138, 69, 0, 0.35);
 }
 .guide-card.active * {
   color: #FFFFFF !important;
 }
 
-/* Ambient Pulse Animation */
+/* Ambient Organic Pulse Animation */
 @keyframes ambientGlow {
-  0%, 100% { transform: scale(1); opacity: 0.45; }
-  50% { transform: scale(1.08); opacity: 0.65; }
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.45; }
+  50% { transform: scale(1.08) translate(10px, -15px); opacity: 0.65; }
 }
 .animate-ambient {
-  animation: ambientGlow 12s ease-in-out infinite alternate;
+  animation: ambientGlow 14s ease-in-out infinite alternate;
 }
 
-/* Soundscape Wave */
+/* Soundscape Wave Bars */
 @keyframes soundwave {
   0%, 100% { height: 4px; }
   50% { height: 16px; }
@@ -109,13 +184,17 @@ body {
   width: 22px;
   height: 22px;
   border: 2px solid #8A4500;
-  border-radius: 6px;
+  border-radius: 7px;
   outline: none;
   cursor: pointer;
   background-color: #FFFFFF;
   display: inline-grid;
   place-content: center;
-  transition: all 0.18s ease;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.custom-checkbox:hover {
+  border-color: #7B3217;
+  transform: scale(1.05);
 }
 .custom-checkbox:checked {
   background-color: #8A4500;
@@ -129,26 +208,85 @@ body {
   border-bottom: 2.5px solid #FFFFFF;
   transform: rotate(-45deg) translate(1px, -1px);
 }
+.custom-checkbox:focus-visible {
+  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.3);
+}
 
 /* Input Fields */
 .zen-input {
   background-color: #FAF6F0;
-  border: 1px solid #E6DED1;
+  border: 1.5px solid #E6DED1;
   border-radius: 14px;
   color: #1C140E;
   font-weight: 500;
   transition: all 0.2s ease;
 }
+.zen-input:hover {
+  border-color: #D5C9B8;
+}
 .zen-input:focus {
   background-color: #FFFFFF;
   border-color: #8A4500;
-  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.12);
+  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.15);
   outline: none;
+}
+
+/* Floating HUD */
+.floating-hud {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.floating-hud:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(41, 30, 22, 0.18);
+}
+
+/* Modal Animations */
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-scale-up {
+  animation: modalScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Severity Gauge Bar */
+.severity-bar {
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+}
+
+/* Responsive Touch Targets */
+@media (max-width: 640px) {
+  .pebble-btn {
+    min-height: 44px;
+  }
 }
 
 /* Print Styles */
 @media print {
-  .no-print { display: none !important; }
-  body { background: #FFFFFF !important; }
-  .shadow-bento, .shadow-sm, .shadow-md { box-shadow: none !important; }
+  .no-print,
+  #garden-nav,
+  #zen-progress-bar,
+  .floating-hud,
+  .md\\:hidden {
+    display: none !important;
+  }
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .shadow-bento, .shadow-sm, .shadow-md, .shadow-lg {
+    box-shadow: none !important;
+  }
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
