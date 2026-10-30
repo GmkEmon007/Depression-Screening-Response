@@ -381,36 +381,44 @@
           A7. Academic Year &amp; Semester <span class="font-bengali text-[#524032] font-normal">(শিক্ষাবর্ষ ও
             সেমিস্টার):</span>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3" data-pebble-group data-question="a7_year">
+
+        <!-- Academic Year Pebble Options -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" data-pebble-group data-question="a7_year">
           <button type="button"
-            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs font-medium">
-            ১ম বর্ষ (1st)
+            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+            <span class="font-bold">1st Year</span><span class="font-bengali text-[#524032] text-[11px] ml-1.5">/ ১ম বর্ষ</span>
           </button>
           <button type="button"
-            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs font-medium">
-            ২য় বর্ষ (2nd)
+            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+            <span class="font-bold">2nd Year</span><span class="font-bengali text-[#524032] text-[11px] ml-1.5">/ ২য় বর্ষ</span>
           </button>
           <button type="button"
-            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs font-medium">
-            ৩য় বর্ষ (3rd)
+            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+            <span class="font-bold">3rd Year</span><span class="font-bengali text-[#524032] text-[11px] ml-1.5">/ ৩য় বর্ষ</span>
           </button>
           <button type="button"
-            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs font-medium">
-            ৪র্থ বর্ষ (4th)
+            class="pebble-btn flex items-center justify-center py-3 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+            <span class="font-bold">4th Year</span><span class="font-bengali text-[#524032] text-[11px] ml-1.5">/ ৪র্থ বর্ষ</span>
           </button>
-          <div class="col-span-2 sm:col-span-4 lg:col-span-1">
-            <select class="zen-input w-full px-3 py-3 text-xs font-medium cursor-pointer !rounded-[20px]">
-              <option value="" disabled selected>Select Semester (সেমিস্টার নির্বাচন করুন)</option>
-              <option>5th Semester (৫ম সেমিস্টার)</option>
-              <option>1st Semester (১ম সেমিস্টার)</option>
-              <option>2nd Semester (২য় সেমিস্টার)</option>
-              <option>3rd Semester (৩য় সেমিস্টার)</option>
-              <option>4th Semester (৪র্থ সেমিস্টার)</option>
-              <option>6th Semester (৬ষ্ঠ সেমিস্টার)</option>
-              <option>7th Semester (৭ম সেমিস্টার)</option>
-              <option>8th Semester (৮ম সেমিস্টার)</option>
-            </select>
-          </div>
+        </div>
+
+        <!-- Select Semester (with Label on Top) -->
+        <div class="space-y-2 pt-1">
+          <label for="select-semester" class="text-xs font-bold text-[#1C140E] block">
+            Select Semester: <span class="font-bengali text-[#524032] font-normal">(সেমিস্টার নির্বাচন করুন):</span>
+          </label>
+          <select id="select-semester"
+            class="zen-input w-full px-4 py-3 text-xs font-medium cursor-pointer !rounded-[20px]">
+            <option value="" disabled selected>Select Semester / সেমিস্টার নির্বাচন করুন</option>
+            <option value="1">1st Semester / ১ম সেমিস্টার</option>
+            <option value="2">2nd Semester / ২য় সেমিস্টার</option>
+            <option value="3">3rd Semester / ৩য় সেমিস্টার</option>
+            <option value="4">4th Semester / ৪র্থ সেমিস্টার</option>
+            <option value="5">5th Semester / ৫ম সেমিস্টার</option>
+            <option value="6">6th Semester / ৬ষ্ঠ সেমিস্টার</option>
+            <option value="7">7th Semester / ৭ম সেমিস্টার</option>
+            <option value="8">8th Semester / ৮ম সেমিস্টার</option>
+          </select>
         </div>
       </div>
     </section>
