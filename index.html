@@ -173,7 +173,7 @@
     <!-- NAV - Garden Stations (Node 187:57) -->
     <!-- ============================================== -->
     <nav id="garden-nav" aria-label="Garden Stations"
-      class="sticky top-4 z-40 bg-[#FFFDF9]/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2.5 sm:p-3 border border-[#E6DED1] shadow-[0_8px_24px_-4px_rgba(41,30,22,0.08)] flex items-center justify-between gap-3 transition-all duration-300">
+      class="relative md:sticky md:top-4 z-40 bg-[#FFFDF9]/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2.5 sm:p-3 border border-[#E6DED1] shadow-[0_8px_24px_-4px_rgba(41,30,22,0.08)] flex items-center justify-between gap-3">
 
       <!-- Left Label -->
       <div class="flex items-center gap-2.5 pl-2 shrink-0">
@@ -184,7 +184,7 @@
       </div>
 
       <!-- Right Waypoint Navigation Pills -->
-      <div class="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none py-0.5 pr-1">
+      <div class="flex-1 min-w-0 flex items-center justify-start md:justify-end gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none py-0.5 pr-1 ml-auto">
         <a href="#module-a"
           class="waypoint-link pebble-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[#FFFDF9] text-[#3D2F24] border border-[#E6DED1] whitespace-nowrap">
           <span
@@ -270,7 +270,7 @@
           <div class="flex items-center gap-3">
             <input type="number" id="input-age" min="15" max="65" placeholder=""
               class="zen-input flex-1 !rounded-[20px]">
-            <span class="zen-unit-badge">Years / <span class="font-bengali ml-1">বছর</span></span>
+            <span class="zen-unit-badge">Years / <span class="font-bengali">বছর</span></span>
           </div>
         </div>
 
@@ -329,7 +329,7 @@
           <div class="flex items-center gap-3">
             <input type="number" id="input-weight" min="30" max="180" placeholder=""
               class="zen-input flex-1 !rounded-[20px]">
-            <span class="zen-unit-badge">KG / <span class="font-bengali ml-1">কেজি</span></span>
+            <span class="zen-unit-badge">KG / <span class="font-bengali">কেজি</span></span>
           </div>
         </div>
 
@@ -359,21 +359,16 @@
           <div class="text-xs font-bold text-[#1C140E]">
             A6. Living Arrangement <span class="font-bengali text-[#524032] font-normal">(বসবাসের ব্যবস্থা):</span>
           </div>
-          <div class="grid grid-cols-3 gap-2" data-pebble-group data-question="a6">
+          <div class="grid grid-cols-2 gap-2" data-pebble-group data-question="a6">
             <button type="button"
-              class="pebble-btn flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs text-center">
-              <span class="font-bold text-[11px]">With family</span>
-              <span class="font-bengali text-[9px] text-[#524032]">পরিবারের সাথে</span>
+              class="pebble-btn flex flex-col items-center justify-center py-2.5 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+              <span class="font-bold">With family</span>
+              <span class="font-bengali text-[10px] text-[#524032]">পরিবারের সাথে</span>
             </button>
             <button type="button"
-              class="pebble-btn flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs text-center">
-              <span class="font-bold text-[11px]">Without family</span>
-              <span class="font-bengali text-[9px] text-[#524032]">পরিবার ছাড়া</span>
-            </button>
-            <button type="button"
-              class="pebble-btn flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs text-center">
-              <span class="font-bold text-[11px]">Hostel / Mess</span>
-              <span class="font-bengali text-[9px] text-[#524032]">মেস / হল</span>
+              class="pebble-btn flex flex-col items-center justify-center py-2.5 px-3 rounded-xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+              <span class="font-bold">Hostel / Mess</span>
+              <span class="font-bengali text-[10px] text-[#524032]">মেস / হল</span>
             </button>
           </div>
         </div>
@@ -404,7 +399,7 @@
             ৪র্থ বর্ষ (4th)
           </button>
           <div class="col-span-2 sm:col-span-4 lg:col-span-1">
-            <select class="zen-input w-full px-3 py-3 text-xs font-medium cursor-pointer">
+            <select class="zen-input w-full px-3 py-3 text-xs font-medium cursor-pointer !rounded-[20px]">
               <option value="" disabled selected>Select Semester (সেমিস্টার নির্বাচন করুন)</option>
               <option>5th Semester (৫ম সেমিস্টার)</option>
               <option>1st Semester (১ম সেমিস্টার)</option>
@@ -1381,8 +1376,8 @@
           <div class="flex items-center gap-2 pt-2 border-t border-[#E6DED1]/70 text-xs text-[#524032]">
             <span>If yes, duration (প্রতি সেশনে সময়):</span>
             <div class="inline-flex items-center gap-1.5">
-              <input type="number" placeholder="" class="zen-input w-20 text-center !h-10 !rounded-xl">
-              <span class="zen-unit-badge px-3 text-xs !h-10 !rounded-xl">min</span>
+              <input type="number" placeholder="" class="zen-input w-20 text-center !h-10 !rounded-[20px]">
+              <span class="zen-unit-badge px-3 text-xs !h-10 !rounded-[20px]">min</span>
             </div>
           </div>
         </div>
@@ -1558,7 +1553,7 @@
             <label class="text-xs text-[#524032] font-bengali block">If yes, please specify condition (যদি হ্যাঁ হয়,
               নির্দিষ্ট করুন):</label>
             <input type="text" placeholder="e.g., Generalized Anxiety Disorder, Depression..."
-              class="zen-input w-full px-4 !h-11 !rounded-2xl text-xs">
+              class="zen-input w-full px-4 !h-11 !rounded-[20px] text-xs">
           </div>
         </div>
       </div>
@@ -2209,7 +2204,7 @@
           <div class="flex items-center gap-3">
             <span class="zen-unit-badge px-4 text-base font-bold text-[#8A4500]">৳</span>
             <input type="text" id="input-income" placeholder="" class="zen-input flex-1 font-bold !rounded-[20px]">
-            <span class="zen-unit-badge">BDT / <span class="font-bengali ml-1">টাকা</span></span>
+            <span class="zen-unit-badge">BDT / <span class="font-bengali">টাকা</span></span>
           </div>
         </div>
 

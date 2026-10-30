@@ -386,8 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submission-card').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // 9. Scroll-Spy Navigation
+  // 9. Sticky Nav Elevation & Scroll-Spy Navigation
   function setupScrollSpy() {
+    const gardenNav = document.getElementById('garden-nav');
     const waypoints = document.querySelectorAll('.waypoint-link');
     const sections = Array.from(waypoints).map(link => {
       const id = link.getAttribute('href').replace('#', '');
@@ -395,9 +396,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }).filter(Boolean);
 
     let ticking = false;
+    let isNavScrolled = false;
+
+    const updateNavElevation = () => {
+      if (!gardenNav) return;
+      if (window.innerWidth >= 768) {
+        const scrolledPast = window.scrollY > 40;
+        if (scrolledPast !== isNavScrolled) {
+          isNavScrolled = scrolledPast;
+          gardenNav.classList.toggle('nav-scrolled', isNavScrolled);
+        }
+      } else if (isNavScrolled) {
+        isNavScrolled = false;
+        gardenNav.classList.remove('nav-scrolled');
+      }
+    };
+
     window.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          updateNavElevation();
+
           let currentSectionId = '';
           const scrollPos = window.scrollY + 160;
 
@@ -426,6 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ticking = true;
       }
     }, { passive: true });
+
+    window.addEventListener('resize', updateNavElevation, { passive: true });
+    updateNavElevation();
   }
 
   // 10. Ambient Courtyard Rain Synthesizer (Web Audio API with Smooth Fade)
