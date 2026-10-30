@@ -163,10 +163,13 @@ body {
 
 /* Unanswered Alert Pulse */
 @keyframes unansweredPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.4);
     border-color: #C2410C;
   }
+
   50% {
     box-shadow: 0 0 0 6px rgba(194, 65, 12, 0);
     border-color: #DD956C;
@@ -197,31 +200,38 @@ body {
 /* --------------------------------------------------------------------------
    6. Form Controls & Custom Inputs
    -------------------------------------------------------------------------- */
+input.zen-input,
 .zen-input {
-  background-color: var(--color-sandstone);
-  border: 1.5px solid var(--color-linen-border);
-  border-radius: 20px;
-  color: var(--color-espresso-text);
+  background-color: var(--color-sandstone) !important;
+  border: 1.5px solid var(--color-linen-border) !important;
+  border-radius: 20px !important;
+  color: var(--color-espresso-text) !important;
   font-weight: 500;
   font-size: 15px;
-  height: 52px;
-  padding: 0 18px;
+  height: 52px !important;
+  padding: 0 18px !important;
   width: 100%;
   min-width: 0;
   transition: all 0.22s ease;
   outline: none;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
+input.zen-input:hover,
 .zen-input:hover {
-  border-color: #D5C9B8;
-  background-color: #FDFCFA;
+  border-color: #D5C9B8 !important;
+  background-color: #FDFCFA !important;
 }
 
+input.zen-input:focus,
 .zen-input:focus {
-  background-color: #FFFFFF;
-  border-color: var(--color-terracotta-accent);
-  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.12);
+  background-color: #FFFFFF !important;
+  border-color: var(--color-terracotta-accent) !important;
+  box-shadow: 0 0 0 3px rgba(138, 69, 0, 0.12) !important;
+  outline: none !important;
 }
 
 .zen-input::placeholder {
@@ -230,14 +240,14 @@ body {
 }
 
 .zen-unit-badge {
-  background-color: var(--color-sandstone);
-  border: 1.5px solid var(--color-linen-border);
-  border-radius: 20px;
-  color: #524032;
+  background-color: var(--color-sandstone) !important;
+  border: 1.5px solid var(--color-linen-border) !important;
+  border-radius: 20px !important;
+  color: #524032 !important;
   font-weight: 500;
   font-size: 13.5px;
-  height: 52px;
-  padding: 0 18px;
+  height: 52px !important;
+  padding: 0 18px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -249,8 +259,8 @@ body {
 }
 
 .zen-unit-badge:hover {
-  background-color: #FDFCFA;
-  border-color: #D5C9B8;
+  background-color: #FDFCFA !important;
+  border-color: #D5C9B8 !important;
 }
 
 /* PHQ-9 Instruction Prompt Highlight Effect (Task 5) */
@@ -314,10 +324,13 @@ body {
    7. Micro-Animations, Soundscape & Floating HUD
    -------------------------------------------------------------------------- */
 @keyframes ambientGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1) translate(0, 0);
     opacity: 0.45;
   }
+
   50% {
     transform: scale(1.08) translate(10px, -15px);
     opacity: 0.65;
@@ -329,16 +342,28 @@ body {
 }
 
 @keyframes soundwave {
-  0%, 100% { height: 4px; }
-  50% { height: 16px; }
+
+  0%,
+  100% {
+    height: 4px;
+  }
+
+  50% {
+    height: 16px;
+  }
 }
 
 .soundwave-bar {
   animation: soundwave 1.2s ease-in-out infinite;
 }
 
-.soundwave-bar:nth-child(2) { animation-delay: 0.2s; }
-.soundwave-bar:nth-child(3) { animation-delay: 0.4s; }
+.soundwave-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.soundwave-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 .floating-hud {
   backdrop-filter: blur(16px);
@@ -356,6 +381,7 @@ body {
     opacity: 0;
     transform: scale(0.95) translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -410,18 +436,19 @@ body {
   }
 
   /* Form Inputs on Mobile */
+  input.zen-input,
   .zen-input {
-    height: 48px;
+    height: 48px !important;
     font-size: 14px;
-    border-radius: 16px;
-    padding: 0 14px;
+    border-radius: 20px !important;
+    padding: 0 14px !important;
   }
 
   .zen-unit-badge {
-    height: 48px;
+    height: 48px !important;
     font-size: 12.5px;
-    border-radius: 16px;
-    padding: 0 14px;
+    border-radius: 20px !important;
+    padding: 0 14px !important;
   }
 
   .phq-instruction-highlight {
@@ -532,6 +559,7 @@ body {
    9. Print Styles
    -------------------------------------------------------------------------- */
 @media print {
+
   .no-print,
   #garden-nav,
   #zen-progress-bar,
