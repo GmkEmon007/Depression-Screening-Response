@@ -11,7 +11,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'vu_research_warm_terracotta_data_v2';
+  const STORAGE_KEY = 'vu_research_warm_terracotta_data_v3';
   const TOTAL_CHECKPOINTS = 54;
 
   let state = {
@@ -289,29 +289,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 7. Calculate Progress Across 54 Items
+  // 7. Calculate Progress Across 54 Items (0% to 100%)
   function updateProgress() {
-    // Count active buttons + filled inputs
-    const activeButtons = document.querySelectorAll('[data-pebble-group] .pebble-btn.active');
     const questionKeys = new Set();
-    activeButtons.forEach(btn => {
-      const g = btn.closest('[data-pebble-group]');
-      if (g && g.getAttribute('data-question')) {
-        questionKeys.add(g.getAttribute('data-question'));
+
+    // Check all pebble button groups
+    document.querySelectorAll('[data-pebble-group]').forEach(group => {
+      const q = group.getAttribute('data-question');
+      if (q && group.querySelector('.pebble-btn.active')) {
+        questionKeys.add(q);
       }
     });
 
-    // Add inputs
-    const inputs = ['input-age', 'input-weight'];
-    inputs.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.value.trim() !== '') questionKeys.add(id);
-    });
+    // Check Input A1 (Age)
+    const ageEl = document.getElementById('input-age');
+    if (ageEl && ageEl.value.trim() !== '') questionKeys.add('a1');
+
+    // Check Input A2 (Height: ft or in)
+    const ftEl = document.getElementById('input-height-ft');
+    const inEl = document.getElementById('input-height-in');
+    if ((ftEl && ftEl.value.trim() !== '') || (inEl && inEl.value.trim() !== '')) {
+      questionKeys.add('a2');
+    }
+
+    // Check Input A4 (Weight)
+    const wtEl = document.getElementById('input-weight');
+    if (wtEl && wtEl.value.trim() !== '') questionKeys.add('a4');
+
+    // Check Input G2 (Income)
+    const incEl = document.getElementById('input-income');
+    if (incEl && incEl.value.trim() !== '') questionKeys.add('g2');
 
     const answeredCount = Math.min(TOTAL_CHECKPOINTS, questionKeys.size);
     const pct = Math.round((answeredCount / TOTAL_CHECKPOINTS) * 100);
 
-    // Slim top bar
+    // Slim top progress bar
     const bar = document.getElementById('zen-progress-bar');
     if (bar) bar.style.width = `${pct}%`;
 
