@@ -31,7 +31,7 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -39,7 +39,7 @@ body {
   background-color: var(--color-sandstone);
   color: var(--color-espresso-text);
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-tap-highlight-color: transparent;
   text-rendering: optimizeLegibility;
 }
@@ -219,6 +219,13 @@ body {
 
 /* Desktop & Tablet: Sticky Header with Zen Float Scroll Animation */
 @media (min-width: 768px) {
+  #garden-nav {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 1rem !important;
+    z-index: 45 !important;
+  }
+
   #garden-nav.nav-scrolled {
     transform: translateY(2px) scale(0.995);
     box-shadow: 0 16px 36px -6px rgba(41, 30, 22, 0.14),

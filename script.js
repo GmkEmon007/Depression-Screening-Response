@@ -397,11 +397,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let ticking = false;
     let isNavScrolled = false;
+    let navInitialTop = 0;
+
+    const getNavInitialTop = () => {
+      if (!gardenNav) return 550;
+      if (!isNavScrolled && gardenNav.offsetTop > 0) {
+        navInitialTop = gardenNav.offsetTop;
+      }
+      return navInitialTop || 550;
+    };
 
     const updateNavElevation = () => {
       if (!gardenNav) return;
       if (window.innerWidth >= 768) {
-        const scrolledPast = window.scrollY > 40;
+        const threshold = Math.max(100, getNavInitialTop() - 20);
+        const scrolledPast = window.scrollY >= threshold;
         if (scrolledPast !== isNavScrolled) {
           isNavScrolled = scrolledPast;
           gardenNav.classList.toggle('nav-scrolled', isNavScrolled);
