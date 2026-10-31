@@ -207,13 +207,17 @@ body {
               border-color 0.3s ease;
 }
 
-/* Mobile: Natural flow without sticking or scroll animation */
+/* Mobile: Sticky Compact Pill Header */
 @media (max-width: 767px) {
   #garden-nav {
-    position: relative !important;
-    top: auto !important;
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0.5rem !important;
+    z-index: 45 !important;
     transform: none !important;
-    box-shadow: 0 4px 16px -2px rgba(41, 30, 22, 0.06) !important;
+    padding: 6px 12px !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 16px -2px rgba(41, 30, 22, 0.08) !important;
   }
 }
 
@@ -224,6 +228,8 @@ body {
     position: sticky !important;
     top: 1rem !important;
     z-index: 45 !important;
+    padding: 8px 16px !important;
+    border-radius: 9999px !important;
   }
 
   #garden-nav.nav-scrolled {
@@ -241,6 +247,96 @@ body {
     box-shadow: 0 8px 24px -4px rgba(41, 30, 22, 0.08);
     transform: translateY(0) scale(1);
   }
+  50% {
+    transform: translateY(3.5px) scale(0.992);
+  }
+  100% {
+    transform: translateY(2px) scale(0.995);
+  }
+}
+
+/* ==========================================================================
+   Module Navigation: Distinct States (Desktop & Mobile)
+   ========================================================================== */
+
+/* 1. Active State: Dark brown background with white text (Unmistakable) */
+.waypoint-link.state-active {
+  background-color: #241812 !important;
+  color: #FFFFFF !important;
+  border-color: #241812 !important;
+  box-shadow: 0 4px 14px -2px rgba(36, 24, 18, 0.28) !important;
+}
+.waypoint-link.state-active .module-letter-badge {
+  background-color: #DD956C !important;
+  color: #241812 !important;
+}
+
+/* 2. Completed State: Light background with small green checkmark */
+.waypoint-link.state-completed {
+  background-color: #F0F7F2 !important;
+  color: #1E3A24 !important;
+  border-color: #C5DDC9 !important;
+}
+.waypoint-link.state-completed .module-letter-badge {
+  background-color: #D8ECD9 !important;
+  color: #1B4323 !important;
+}
+.waypoint-link.state-completed:hover {
+  background-color: #E3EFE6 !important;
+}
+
+/* 3. Not Completed / Pending: White/subtle background with subtle border */
+.waypoint-link.state-pending {
+  background-color: #FFFDF9 !important;
+  color: #3D2F24 !important;
+  border-color: #E6DED1 !important;
+}
+.waypoint-link.state-pending .module-letter-badge {
+  background-color: #F3EDE2 !important;
+  color: #524032 !important;
+}
+.waypoint-link.state-pending:hover {
+  background-color: #FAF6F0 !important;
+  border-color: #D5C9B8 !important;
+}
+
+/* Mobile Drawer Links */
+.mobile-waypoint-link {
+  transition: all 0.2s ease;
+}
+
+.mobile-waypoint-link.state-active {
+  background-color: #241812 !important;
+  color: #FFFFFF !important;
+  border-color: #241812 !important;
+}
+.mobile-waypoint-link.state-active .module-badge {
+  background-color: #DD956C !important;
+  color: #241812 !important;
+}
+.mobile-waypoint-link.state-active .module-name {
+  color: #FFFFFF !important;
+}
+
+.mobile-waypoint-link.state-completed {
+  background-color: #F0F7F2 !important;
+  color: #1E3A24 !important;
+  border-color: #C5DDC9 !important;
+}
+.mobile-waypoint-link.state-completed .module-badge {
+  background-color: #D8ECD9 !important;
+  color: #1B4323 !important;
+}
+
+.mobile-waypoint-link.state-pending {
+  background-color: #FFFDF9 !important;
+  color: #3D2F24 !important;
+  border-color: #E6DED1 !important;
+}
+.mobile-waypoint-link.state-pending .module-badge {
+  background-color: #F3EDE2 !important;
+  color: #524032 !important;
+}
   50% {
     transform: translateY(3.5px) scale(0.992);
   }
@@ -531,17 +627,7 @@ input.zen-input:focus,
     min-height: 42px;
   }
 
-  /* Garden navigation bar */
-  #garden-nav {
-    padding: 8px 10px;
-    border-radius: 18px;
-  }
-
-  #garden-nav .waypoint-link {
-    flex-shrink: 0;
-    padding: 6px 12px;
-    font-size: 11px;
-  }
+  /* Garden navigation bar is responsive */
 
   /* Soundscape toggle */
   #soundscape-toggle {

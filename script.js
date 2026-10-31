@@ -341,33 +341,110 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileProgress = document.getElementById('mobile-progress-badge');
     if (mobileProgress) mobileProgress.textContent = `${pct}%`;
 
-    // Update section checkmarks in Nav
-    updateModuleCheckmarks();
+    // Update section checkmarks and states in Nav
+    updateNavigationModules();
   }
 
-  function updateModuleCheckmarks() {
-    const modules = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-    modules.forEach(m => {
-      const section = document.getElementById(`module-${m}`);
-      if (!section) return;
-      const groups = section.querySelectorAll('[data-pebble-group]');
-      let allAnswered = true;
-      groups.forEach(g => {
-        if (!g.querySelector('.pebble-btn.active')) allAnswered = false;
-      });
+  // Module Definitions with Standard & Short Names
+  const moduleDefs = [
+    { id: 'a', name: 'Demographics', shortName: 'Demographic' },
+    { id: 'b', name: 'PHQ-9', shortName: 'PHQ-9' },
+    { id: 'c', name: 'Academic', shortName: 'Academic' },
+    { id: 'd', name: 'Future & AI', shortName: 'Future & AI' },
+    { id: 'e', name: 'Rest & Vitality', shortName: 'Rest & Vitality' },
+    { id: 'f', name: 'Social Support', shortName: 'Social Support' },
+    { id: 'g', name: 'Earth & Hearth', shortName: 'Earth & Hearth' }
+  ];
 
-      const navPill = document.querySelector(`.waypoint-link[href="#module-${m}"]`);
-      if (navPill) {
-        let badge = navPill.querySelector('.module-complete-check');
-        if (allAnswered) {
-          if (!badge) {
-            badge = document.createElement('span');
-            badge.className = 'module-complete-check ml-1 text-[11px] font-bold text-emerald-600';
-            badge.textContent = '✓';
-            navPill.appendChild(badge);
+  let currentTrackedSectionId = 'module-a';
+
+  function updateNavigationModules(activeSectionId) {
+    if (activeSectionId) {
+      currentTrackedSectionId = activeSectionId;
+    }
+
+    const activeModKey = currentTrackedSectionId.replace('module-', '');
+    const activeMod = moduleDefs.find(m => m.id === activeModKey) || moduleDefs[0];
+
+    // Update Mobile Nav Center Trigger Text
+    const mobileCurrLabel = document.getElementById('mobile-current-module-name');
+    if (mobileCurrLabel) {
+      mobileCurrLabel.textContent = activeMod.shortName || activeMod.name;
+    }
+
+    // Update each module's three distinct states (Active, Completed, Not completed)
+    moduleDefs.forEach(m => {
+      const section = document.getElementById(`module-${m.id}`);
+      let isCompleted = false;
+      if (section) {
+        const groups = section.querySelectorAll('[data-pebble-group]');
+        if (groups.length > 0) {
+          isCompleted = Array.from(groups).every(g => g.querySelector('.pebble-btn.active'));
+        }
+      }
+
+      const isActive = (m.id === activeModKey);
+
+      // 1. Desktop Nav Button
+      const deskLink = document.querySelector(`.waypoint-link[data-module="${m.id}"]`);
+      if (deskLink) {
+        deskLink.classList.remove('state-active', 'state-completed', 'state-pending', 'active');
+        let checkSpan = deskLink.querySelector('.module-check');
+
+        if (isActive) {
+          deskLink.classList.add('state-active', 'active');
+          if (isCompleted) {
+            if (!checkSpan) {
+              checkSpan = document.createElement('span');
+              checkSpan.className = 'module-check text-white/90 font-bold text-xs ml-1';
+              checkSpan.textContent = '✓';
+              deskLink.appendChild(checkSpan);
+            } else {
+              checkSpan.className = 'module-check text-white/90 font-bold text-xs ml-1';
+            }
+          } else if (checkSpan) {
+            checkSpan.remove();
           }
-        } else if (badge) {
-          badge.remove();
+        } else if (isCompleted) {
+          deskLink.classList.add('state-completed');
+          if (!checkSpan) {
+            checkSpan = document.createElement('span');
+            checkSpan.className = 'module-check text-emerald-600 font-bold text-xs ml-1';
+            checkSpan.textContent = '✓';
+            deskLink.appendChild(checkSpan);
+          } else {
+            checkSpan.className = 'module-check text-emerald-600 font-bold text-xs ml-1';
+          }
+        } else {
+          deskLink.classList.add('state-pending');
+          if (checkSpan) checkSpan.remove();
+        }
+      }
+
+      // 2. Mobile Drawer Item
+      const mobLink = document.querySelector(`.mobile-waypoint-link[data-module="${m.id}"]`);
+      if (mobLink) {
+        mobLink.classList.remove('state-active', 'state-completed', 'state-pending');
+        const statusSpan = mobLink.querySelector('.module-status');
+
+        if (isActive) {
+          mobLink.classList.add('state-active');
+          if (statusSpan) {
+            statusSpan.className = 'module-status text-[11px] font-bold text-[#DD956C]';
+            statusSpan.textContent = isCompleted ? 'Active (Completed ✓)' : 'Active Section';
+          }
+        } else if (isCompleted) {
+          mobLink.classList.add('state-completed');
+          if (statusSpan) {
+            statusSpan.className = 'module-status text-[11px] font-bold text-emerald-600 flex items-center gap-1';
+            statusSpan.textContent = 'Completed ✓';
+          }
+        } else {
+          mobLink.classList.add('state-pending');
+          if (statusSpan) {
+            statusSpan.className = 'module-status text-[11px] font-medium text-[#524032]';
+            statusSpan.textContent = 'Incomplete';
+          }
         }
       }
     });
@@ -390,26 +467,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submission-card').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // 9. Sticky Nav Elevation & Scroll-Spy Navigation
+  // 9. Sticky Nav Elevation, Scroll-Spy & Mobile Directory
   function setupScrollSpy() {
     const gardenNav = document.getElementById('garden-nav');
-    const waypoints = document.querySelectorAll('.waypoint-link');
-    const sections = Array.from(waypoints).map(link => {
-      const id = link.getAttribute('href').replace('#', '');
-      return document.getElementById(id);
-    }).filter(Boolean);
+    const sections = moduleDefs.map(m => document.getElementById(`module-${m.id}`)).filter(Boolean);
 
     let ticking = false;
     let isNavScrolled = false;
-    let navInitialTop = 0;
-
-    const getNavInitialTop = () => {
-      if (!gardenNav) return 550;
-      if (!isNavScrolled && gardenNav.offsetTop > 0) {
-        navInitialTop = gardenNav.offsetTop;
-      }
-      return navInitialTop || 550;
-    };
 
     const updateNavElevation = () => {
       if (!gardenNav) return;
@@ -430,28 +494,17 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(() => {
           updateNavElevation();
 
-          let currentSectionId = '';
-          const scrollPos = window.scrollY + 160;
+          let detectedSectionId = '';
+          const scrollPos = window.scrollY + 200;
 
           sections.forEach(sec => {
             if (sec.offsetTop <= scrollPos) {
-              currentSectionId = sec.getAttribute('id');
+              detectedSectionId = sec.getAttribute('id');
             }
           });
 
-          if (currentSectionId) {
-            waypoints.forEach(link => {
-              const href = link.getAttribute('href');
-              const isCurrent = href === `#${currentSectionId}`;
-              if (isCurrent) {
-                link.classList.add('active');
-                link.classList.remove('bg-[#FFFDF9]', 'text-[#3D2F24]');
-                link.classList.add('bg-[#241812]', 'text-white');
-              } else {
-                link.classList.remove('active', 'bg-[#241812]', 'text-white');
-                link.classList.add('bg-[#FFFDF9]', 'text-[#3D2F24]');
-              }
-            });
+          if (detectedSectionId && detectedSectionId !== currentTrackedSectionId) {
+            updateNavigationModules(detectedSectionId);
           }
           ticking = false;
         });
@@ -461,6 +514,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', updateNavElevation, { passive: true });
     updateNavElevation();
+    updateNavigationModules('module-a');
+  }
+
+  function setupMobileDrawer() {
+    const drawer = document.getElementById('mobile-module-drawer');
+    const openGridBtn = document.getElementById('mobile-grid-btn');
+    const openTriggerBtn = document.getElementById('mobile-module-trigger');
+    const closeBtn = document.getElementById('close-mobile-drawer');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+
+    if (!drawer) return;
+
+    const openDrawer = () => {
+      drawer.classList.remove('hidden');
+      drawer.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      updateNavigationModules();
+    };
+
+    const closeDrawer = () => {
+      drawer.classList.add('hidden');
+      drawer.classList.remove('flex');
+      document.body.style.overflow = '';
+    };
+
+    if (openGridBtn) openGridBtn.addEventListener('click', openDrawer);
+    if (openTriggerBtn) openTriggerBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+    document.querySelectorAll('.mobile-waypoint-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        const target = document.querySelector(href);
+        closeDrawer();
+        if (target) {
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 150);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !drawer.classList.contains('hidden')) {
+        closeDrawer();
+      }
+    });
   }
 
   // 10. Ambient Courtyard Rain Synthesizer (Web Audio API with Smooth Fade)
@@ -742,4 +844,5 @@ document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
   setupScrollSpy();
   setupModal();
+  setupMobileDrawer();
 });
