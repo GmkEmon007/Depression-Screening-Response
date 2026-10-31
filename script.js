@@ -327,6 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const bar = document.getElementById('zen-progress-bar');
     if (bar) bar.style.width = `${pct}%`;
 
+    // Bottom dock micro progress bar
+    const bottomBarFill = document.getElementById('zen-bottom-progress-fill');
+    if (bottomBarFill) bottomBarFill.style.width = `${pct}%`;
+
     // Progress badges
     const progressText = document.getElementById('progress-indicator-text');
     if (progressText) progressText.textContent = `${answeredCount} / ${TOTAL_CHECKPOINTS} completed (${pct}%)`;
@@ -593,6 +597,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (reviewBtn) reviewBtn.addEventListener('click', openModal);
     if (floatingReview) floatingReview.addEventListener('click', openModal);
+
+    const floatingSubmit = document.getElementById('floating-submit-btn');
+    if (floatingSubmit) {
+      floatingSubmit.addEventListener('click', () => {
+        if (submitBtn) {
+          submitBtn.click();
+        } else {
+          openModal();
+        }
+      });
+    }
+
     if (submitBtn) submitBtn.addEventListener('click', () => {
       openModal();
       showToast('Questionnaire completed! Review your reflections below.');

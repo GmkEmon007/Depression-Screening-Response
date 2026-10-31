@@ -559,10 +559,7 @@ input.zen-input:focus,
     vertical-align: middle;
   }
 
-  /* Hide floating desktop HUD on mobile */
-  .floating-hud {
-    display: none !important;
-  }
+  /* Floating HUD is unified across mobile and desktop */
 }
 
 /* --------------------------------------------------------------------------

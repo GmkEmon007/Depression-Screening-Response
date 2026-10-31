@@ -139,34 +139,47 @@
       </div>
 
       <!-- Institutional Governance & Informed Consent Box -->
-      <div class="bg-[#FFFDF9] rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-[#E6DED1] shadow-sm space-y-4">
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-xl bg-[#FBECE3] flex items-center justify-center shrink-0 text-[#8A4500] mt-0.5">
-            <span class="material-symbols-outlined text-lg">gavel</span>
+      <div class="bg-[#FFFDF9] rounded-2xl sm:rounded-3xl p-5 border border-[#E6DED1] shadow-sm space-y-4">
+
+        <!-- Icon & Heading -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 rounded-xl bg-[#FBECE3] border border-[#EDBE9F]/60 flex items-center justify-center shrink-0 text-[#8A4500] shadow-sm">
+            <span class="material-symbols-outlined text-xl">gavel</span>
           </div>
-          <div class="text-xs sm:text-[13px] text-[#3D2F24] leading-relaxed">
-            <span class="font-bold text-[#1C140E]">Institutional Governance (CIR Protocol #VU/ERC/2026/042):</span>
-            This questionnaire is part of an undergraduate research project at Varendra University (VU), conducted with
-            official clearance from the Center for Interdisciplinary Research (CIR), VU. CIR Reference No.: <span
-              class="font-semibold text-[#8A4500]">VU/ERC/2026/042</span>. Your responses are cryptographically hashed,
-            strictly confidential, and utilized purely for academic research. Participation is completely voluntary.
+          <div>
+            <h3 class="text-base font-bold text-[#1C140E] leading-tight">
+              Institutional Governance
+            </h3>
+            <span class="text-xs font-semibold text-[#8A4500]">
+              CIR Protocol #VU/ERC/2026/042
+            </span>
           </div>
         </div>
 
-        <div class="border-t border-[#E6DED1]/70 pt-3 flex items-center gap-3">
-          <label
-            class="flex items-center gap-3 cursor-pointer select-none text-xs sm:text-sm font-medium text-[#1C140E]">
-            <input type="checkbox" id="consent-checkbox" class="custom-checkbox">
-            <span class="font-bengali">
-              আমি উপরোক্ত শর্তাবলী পড়েছি এবং এই গবেষণায় স্বেচ্ছায় অংশগ্রহণ করতে সম্মত।
-              <span class="font-sans text-[#524032] font-normal text-xs block sm:inline sm:ml-1">(I have read and
-                understood the terms and provide voluntary informed consent to participate.)</span>
-            </span>
+        <!-- Full-Width Body Paragraph -->
+        <p class="text-[15px] sm:text-base text-[#3D2F24] leading-[1.55] w-full">
+          This questionnaire is part of an undergraduate research project at Varendra University (VU), conducted with
+          official clearance from the Center for Interdisciplinary Research (CIR), VU. CIR Reference No.: <span
+            class="font-semibold text-[#8A4500]">VU/ERC/2026/042</span>. Your responses are cryptographically hashed,
+          strictly confidential, and utilized purely for academic research. Participation is completely voluntary.
+        </p>
+
+        <!-- Subtle Divider & Aligned Bilingual Consent Checkbox -->
+        <div class="border-t border-[#E6DED1]/60 pt-4">
+          <label for="consent-checkbox" class="flex items-start gap-3.5 cursor-pointer select-none group">
+            <input type="checkbox" id="consent-checkbox" class="custom-checkbox shrink-0 mt-0.5">
+            <div class="space-y-1.5 text-[14px] sm:text-[15px] leading-relaxed">
+              <p class="font-medium text-[#1C140E] group-hover:text-[#8A4500] transition-colors">
+                I have read and understood the terms and voluntarily consent to participate.
+              </p>
+              <p class="font-bengali text-[#524032]">
+                আমি উপরোক্ত শর্তাবলী পড়েছি এবং এই গবেষণায় স্বেচ্ছায় অংশগ্রহণ করতে সম্মত।
+              </p>
+            </div>
           </label>
         </div>
       </div>
-
-
     </header>
 
     <!-- ============================================== -->
@@ -2374,62 +2387,44 @@
   </div>
 
   <!-- ============================================== -->
-  <!-- MOBILE BOTTOM STICKY BAR (Mobile Viewport Optimization) -->
+  <!-- FLOATING ZEN BOTTOM HUD (Unified Mobile & Desktop Controls) -->
   <!-- ============================================== -->
-  <div
-    class="md:hidden fixed bottom-0 inset-x-0 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#E6DED1] p-3 z-40 flex items-center justify-between shadow-2xl no-print">
+  <aside id="floating-zen-hud" aria-label="Session Navigation & Submission"
+    class="fixed bottom-3 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 sm:w-[320px] z-40 bg-[#FFFDF9]/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 border border-[#E6DED1] shadow-[0_12px_36px_-6px_rgba(41,30,22,0.18)] transition-all duration-300 no-print">
+
+    <!-- Top Row: Progress Label & Scroll to Top -->
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#8A4500] animate-pulse"></span>
+        <span id="floating-progress-text" class="text-xs sm:text-[13px] font-bold text-[#1C140E]">0% complete</span>
+      </div>
+      <button type="button" id="scroll-top-btn" title="Scroll to Top" aria-label="Scroll to top"
+        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#FAF6F0] hover:bg-[#F3EDE2] text-[#3D2F24] flex items-center justify-center border border-[#E6DED1] transition-all shadow-xs active:scale-90">
+        <span class="material-symbols-outlined text-base leading-none">arrow_upward</span>
+      </button>
+    </div>
+
+    <!-- Middle: Micro Progress Bar -->
+    <div class="w-full h-1.5 bg-[#E6DED1]/70 rounded-full overflow-hidden my-2.5">
+      <div id="zen-bottom-progress-fill"
+        class="h-full bg-gradient-to-r from-[#DD956C] via-[#C2410C] to-[#8A4500] w-0 rounded-full transition-all duration-300 shadow-sm">
+      </div>
+    </div>
+
+    <!-- Bottom Row: Action Buttons -->
     <div class="flex items-center gap-2">
-      <span id="mobile-progress-badge"
-        class="px-2 py-0.5 rounded-md bg-[#8A4500] text-white text-[11px] font-bold">0%</span>
-      <span class="text-xs font-bold text-[#1C140E]">VU Research</span>
-    </div>
-    <div class="flex items-center gap-1.5">
-      <button type="button" id="mobile-next-unanswered"
-        class="px-3 py-1.5 rounded-full bg-[#FAF6F0] border border-[#E6DED1] text-[11px] font-bold text-[#524032]">
-        Next ↓
+      <button type="button" id="floating-review-btn"
+        class="flex-1 py-2 px-3 rounded-xl bg-[#FAF6F0] hover:bg-[#F3EDE2] border border-[#E6DED1] text-xs font-bold text-[#3D2F24] transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+        <span class="material-symbols-outlined text-[15px] text-[#8A4500]">visibility</span>
+        <span>Review Answers</span>
       </button>
-      <a href="#garden-nav"
-        class="px-2.5 py-1.5 rounded-full bg-[#FAF6F0] border border-[#E6DED1] text-[11px] font-bold text-[#524032]">
-        Top ↑
-      </a>
-      <button type="button" onclick="document.getElementById('review-btn').click()"
-        class="px-3.5 py-1.5 rounded-full bg-[#241812] text-white text-[11px] font-bold shadow-sm">
-        Review
+
+      <button type="button" id="floating-submit-btn"
+        class="flex-1 py-2 px-3 rounded-xl bg-[#8A4500] hover:bg-[#703600] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95">
+        <span>Submit</span>
+        <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
       </button>
     </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- FLOATING ZEN HUD (Desktop / Tablet Ergonomic Controls) -->
-  <!-- ============================================== -->
-  <aside id="floating-zen-hud" aria-label="Quick Session HUD"
-    class="fixed bottom-6 right-6 z-40 hidden md:flex items-center gap-2 p-2 rounded-full bg-[#FFFDF9]/95 border border-[#E6DED1] shadow-2xl floating-hud no-print">
-    <!-- Progress Indicator -->
-    <button type="button" id="jump-next-unanswered" title="Jump to Next Unanswered Question"
-      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF6F0] hover:bg-[#F3EDE2] text-xs font-bold text-[#3D2F24] border border-[#E6DED1] transition-all">
-      <span class="material-symbols-outlined text-[15px] text-[#8A4500]">play_arrow</span>
-      <span id="floating-progress-text">0% complete</span>
-    </button>
-
-
-
-    <!-- Sound Toggle -->
-    <button type="button" id="floating-sound-toggle" title="Toggle 432Hz Courtyard Rain Soundscape"
-      class="w-8 h-8 rounded-full bg-[#FAF6F0] hover:bg-[#F3EDE2] text-[#8A4500] flex items-center justify-center border border-[#E6DED1] transition-all">
-      <span class="material-symbols-outlined text-base">volume_up</span>
-    </button>
-
-    <!-- Review Modal Trigger -->
-    <button type="button" id="floating-review-btn" title="Review Your Responses"
-      class="w-8 h-8 rounded-full bg-[#FAF6F0] hover:bg-[#F3EDE2] text-[#3D2F24] flex items-center justify-center border border-[#E6DED1] transition-all">
-      <span class="material-symbols-outlined text-base">visibility</span>
-    </button>
-
-    <!-- Scroll to Top -->
-    <button type="button" id="scroll-top-btn" title="Scroll to Top"
-      class="w-8 h-8 rounded-full bg-[#FAF6F0] hover:bg-[#F3EDE2] text-[#3D2F24] flex items-center justify-center border border-[#E6DED1] transition-all">
-      <span class="material-symbols-outlined text-base">arrow_upward</span>
-    </button>
   </aside>
 
   <!-- ============================================== -->
