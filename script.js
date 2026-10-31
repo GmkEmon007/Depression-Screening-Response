@@ -414,8 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateNavElevation = () => {
       if (!gardenNav) return;
       if (window.innerWidth >= 768) {
-        const threshold = Math.max(100, getNavInitialTop() - 20);
-        const scrolledPast = window.scrollY >= threshold;
+        const scrolledPast = window.scrollY > 20;
         if (scrolledPast !== isNavScrolled) {
           isNavScrolled = scrolledPast;
           gardenNav.classList.toggle('nav-scrolled', isNavScrolled);
