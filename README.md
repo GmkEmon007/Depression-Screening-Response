@@ -2,7 +2,7 @@
 
 > **Center for Interdisciplinary Research (CIR), Varendra University**  
 > **Institutional Research Ethics Clearance:** `Protocol #VU/ERC/2026/042`  
-> **Project:** *An Explainable Machine Learning Framework for Context-Aware Depression Screening and Personalized Student Support among University Students in Bangladesh*
+> **Thesis:** *An Explainable Machine Learning Framework for Context-Aware Depression Screening and Personalized Student Support among University Students in Bangladesh*
 
 ---
 
