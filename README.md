@@ -1,4 +1,4 @@
-# VU Research — Warm Terracotta Sanctuary (Figma Auto-Layout Master)
+# Context-Aware Depression Screening Response
 
 > **Center for Interdisciplinary Research (CIR), Varendra University**  
 > **Institutional Research Ethics Clearance:** `Protocol #VU/ERC/2026/042`  
