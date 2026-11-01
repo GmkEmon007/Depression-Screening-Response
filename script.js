@@ -675,55 +675,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 11. Modal & Reflection Summary + Google Sheets Integration
-  const GOOGLE_SHEETS_STORAGE_KEY = 'vu_research_google_sheet_url';
-  const DEFAULT_SHEETS_URL = (window.__ENV__ && window.__ENV__.GOOGLE_SHEET_URL)
+  // 11. Modal & Reflection Summary
+  // Silent Google Sheet endpoint loaded from env/env.js
+  const GOOGLE_SHEET_URL = (window.__ENV__ && window.__ENV__.GOOGLE_SHEET_URL)
     ? window.__ENV__.GOOGLE_SHEET_URL
-    : 'https://script.google.com/macros/s/AKfycbygvYuzL90x3sNCtgFYGY7CsqrXM0b2ejgeaCe8M0LAwe8y-MyMAool9R7QufxELIs1wQ/exec';
-  let googleSheetUrl = localStorage.getItem(GOOGLE_SHEETS_STORAGE_KEY) || DEFAULT_SHEETS_URL;
-
-  // Update visual indicators for Google Sheets sync status
-  function updateSheetsStatus(isSubmitted = false) {
-    const dot = document.getElementById('sheets-status-dot');
-    const text = document.getElementById('sheets-status-text');
-    const modalIcon = document.getElementById('modal-sheets-icon');
-    const modalLabel = document.getElementById('modal-sheets-status-label');
-
-    if (isSubmitted) {
-      if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-      if (text) text.textContent = 'Sheet Synced';
-      if (modalIcon) {
-        modalIcon.className = 'material-symbols-outlined text-base text-emerald-700';
-        modalIcon.textContent = 'cloud_done';
-      }
-      if (modalLabel) {
-        modalLabel.className = 'text-emerald-800 ml-1 font-bold';
-        modalLabel.textContent = 'Submitted & Synced';
-      }
-    } else if (googleSheetUrl) {
-      if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-      if (text) text.textContent = 'Sheet Ready';
-      if (modalIcon) {
-        modalIcon.className = 'material-symbols-outlined text-base text-emerald-700';
-        modalIcon.textContent = 'cloud_done';
-      }
-      if (modalLabel) {
-        modalLabel.className = 'text-emerald-800 ml-1 font-bold';
-        modalLabel.textContent = 'Connected (Ready to Submit)';
-      }
-    } else {
-      if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
-      if (text) text.textContent = 'Google Sheet';
-      if (modalIcon) {
-        modalIcon.className = 'material-symbols-outlined text-base text-amber-600';
-        modalIcon.textContent = 'cloud_queue';
-      }
-      if (modalLabel) {
-        modalLabel.className = 'text-amber-800 ml-1 font-bold';
-        modalLabel.textContent = 'Not Connected';
-      }
-    }
-  }
+    : '';
 
   // Build research payload aligned with Google Sheet columns
   function buildSubmissionPayload(token) {
@@ -740,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formattedHeight = (htFt || htIn) ? `${htFt}'${htIn}"` : '';
 
     return {
-      // Compatibility with user's existing Google Sheet headers:
+      // Compatibility with Google Sheet headers:
       'Submission ID': token,
       'Timestamp': new Date().toISOString(),
       'PHQ-9 Score': phq.total,
@@ -763,6 +719,16 @@ document.addEventListener('DOMContentLoaded', () => {
       'B6_Year': state.likertScores['a7_year'] || '',
       'B7_UniType': 'Varendra University',
       'B8_Living': state.likertScores['a6'] || '',
+      'C1': state.likertScores['c1'] || '',
+      'C2': state.likertScores['c2'] || '',
+      'C3': state.likertScores['c3'] || '',
+      'C4': state.likertScores['c4'] || '',
+      'C5': state.likertScores['c5'] || '',
+      'C6': state.likertScores['c6'] || '',
+      'C7': state.likertScores['c7'] || '',
+      'C8': state.likertScores['c8'] || '',
+      'D1': state.likertScores['d1'] || '',
+      'D2': state.likertScores['d2'] || '',
       'E1_Sleep': state.likertScores['e1'] || '',
       'E2_Wake': state.likertScores['e2'] || '',
       'E3_Exercise': state.likertScores['e3'] || '',
@@ -771,8 +737,19 @@ document.addEventListener('DOMContentLoaded', () => {
       'E5_Eating': state.likertScores['e5'] || '',
       'E6_Substance': state.likertScores['e6'] || '',
       'E7_Disability': state.likertScores['e7'] || '',
+      'F1': state.likertScores['f1'] || '',
+      'F2': state.likertScores['f2'] || '',
+      'F3': state.likertScores['f3'] || '',
+      'F4': state.likertScores['f4'] || '',
+      'F5': state.likertScores['f5'] || '',
+      'F6': state.likertScores['f6'] || '',
+      'F7': state.likertScores['f7'] || '',
+      'F8': state.likertScores['f8'] || '',
       'G1_Finance': document.getElementById('input-income')?.value?.trim() || state.inputs['input-income'] || '',
       'G2': state.likertScores['g2'] || state.likertScores['g1'] || '',
+      'G3': state.likertScores['g3'] || '',
+      'G4': state.likertScores['g4'] || '',
+      'G5': state.likertScores['g5'] || '',
       'G6_Event': state.likertScores['g6'] || '',
       'Completed Seconds': elapsedSeconds,
       'User Agent': navigator.userAgent,
@@ -783,10 +760,10 @@ document.addEventListener('DOMContentLoaded', () => {
       Consent_Given: consentCheck && consentCheck.checked ? 'Yes' : 'No',
       Total_Answered: state.answeredQuestions.size,
 
-      // Module A: Demographics
+      // Demographics
       A1_Age: document.getElementById('input-age')?.value?.trim() || state.inputs['input-age'] || '',
-      A2_Height_Ft: document.getElementById('input-height-ft')?.value?.trim() || state.inputs['input-height-ft'] || '',
-      A2_Height_In: document.getElementById('input-height-in')?.value?.trim() || state.inputs['input-height-in'] || '',
+      A2_Height_Ft: htFt,
+      A2_Height_In: htIn,
       A3_Gender: state.likertScores['a3'] || '',
       A4_Weight_Kg: document.getElementById('input-weight')?.value?.trim() || state.inputs['input-weight'] || '',
       A5_Relationship_Status: state.likertScores['a5'] || '',
@@ -795,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
       A7_Study_Year: state.likertScores['a7_year'] || '',
       A8_Family_Monthly_Income: document.getElementById('input-income')?.value?.trim() || state.inputs['input-income'] || '',
 
-      // Module B: PHQ-9 Depression Index (0-3 each)
+      // Module B: PHQ-9
       B1_Anhedonia: state.phq9Scores['b1'] !== undefined ? state.phq9Scores['b1'] : '',
       B2_Depressed_Mood: state.phq9Scores['b2'] !== undefined ? state.phq9Scores['b2'] : '',
       B3_Sleep_Issues: state.phq9Scores['b3'] !== undefined ? state.phq9Scores['b3'] : '',
@@ -808,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
       PHQ9_Total_Score: phq.total,
       PHQ9_Severity: phq.severity,
 
-      // Module C: Academic Stress (C1 - C8)
+      // Module C: Academic
       C1: state.likertScores['c1'] || '',
       C2: state.likertScores['c2'] || '',
       C3: state.likertScores['c3'] || '',
@@ -818,13 +795,13 @@ document.addEventListener('DOMContentLoaded', () => {
       C7: state.likertScores['c7'] || '',
       C8: state.likertScores['c8'] || '',
 
-      // Module D: Future Anxiety & AI Outlook (D1 - D4)
+      // Module D: Future & AI
       D1: state.likertScores['d1'] || '',
       D2: state.likertScores['d2'] || '',
       D3: state.likertScores['d3'] || '',
       D4: state.likertScores['d4'] || '',
 
-      // Module E: Rest, Sleep & Vitality (E1 - E8)
+      // Module E: Rest, Sleep & Vitality
       E1: state.likertScores['e1'] || '',
       E2: state.likertScores['e2'] || '',
       E3: state.likertScores['e3'] || '',
@@ -834,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
       E7: state.likertScores['e7'] || '',
       E8: state.likertScores['e8'] || '',
 
-      // Module F: MSPSS Social Support (F1 - F12)
+      // Module F: MSPSS
       F1: state.likertScores['f1'] || '',
       F2: state.likertScores['f2'] || '',
       F3: state.likertScores['f3'] || '',
@@ -876,13 +853,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePhq9Score();
     calculateMspssBreakdown();
-    updateSheetsStatus();
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
   }
 
-  // Submit Questionnaire to Google Sheet
+  // Silent Background Submission
   async function submitQuestionnaire() {
     const consentCheck = document.getElementById('consent-checkbox');
     if (consentCheck && !consentCheck.checked) {
@@ -893,22 +869,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // If Google Sheet URL not yet set, prompt setup modal
-    if (!googleSheetUrl) {
-      showToast('Please connect your Google Sheet URL to save responses');
-      const configModal = document.getElementById('sheets-config-modal');
-      if (configModal) {
-        configModal.classList.remove('hidden');
-        configModal.classList.add('flex');
-      }
-      return;
-    }
-
     const submitBtn = document.getElementById('submit-btn');
     const origHtml = submitBtn ? submitBtn.innerHTML : '';
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Submitting to Google Sheet...';
+      submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Submitting...';
     }
 
     let tokenEl = document.getElementById('modal-crypto-token');
@@ -921,34 +886,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const payload = buildSubmissionPayload(token);
 
-    try {
-      await fetch(googleSheetUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
+    // Save local backup copy
+    localStorage.setItem('vu_last_submitted_response', JSON.stringify(payload));
 
-      // Save local backup copy
-      localStorage.setItem('vu_last_submitted_response', JSON.stringify(payload));
-
-      showToast('✓ Questionnaire responses recorded in Google Sheet!');
-      if (submitBtn) {
-        submitBtn.innerHTML = '<span class="material-symbols-outlined text-sm text-emerald-400">check_circle</span> Submitted to Google Sheet';
-        submitBtn.classList.remove('bg-[#241812]');
-        submitBtn.classList.add('bg-emerald-900');
+    // Quiet background post to Google Sheet if endpoint configured
+    if (GOOGLE_SHEET_URL) {
+      try {
+        await fetch(GOOGLE_SHEET_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn('Background sync note:', err);
       }
-      updateSheetsStatus(true);
-      openReflectionModal();
-    } catch (err) {
-      console.error('Google Sheets submission error:', err);
-      showToast('⚠️ Could not connect to Google Sheet. Responses preserved locally.');
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = origHtml;
-      }
-      openReflectionModal();
     }
+
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Submitted';
+      submitBtn.classList.remove('bg-[#241812]');
+      submitBtn.classList.add('bg-emerald-900');
+    }
+
+    showToast('Questionnaire completed! Review your reflections below.');
+    openReflectionModal();
   }
 
   function setupModal() {
@@ -1022,121 +984,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-json-btn');
     if (exportBtn) {
       exportBtn.addEventListener('click', exportResponsesAsJSON);
-    }
-
-    // Google Sheets Config Setup
-    setupGoogleSheetsConfig();
-  }
-
-  // Setup Google Sheets configuration modal and events
-  function setupGoogleSheetsConfig() {
-    const configModal = document.getElementById('sheets-config-modal');
-    const closeBtn = document.getElementById('close-sheets-modal');
-    const openBtn = document.getElementById('sheets-config-btn');
-    const modalOpenBtn = document.getElementById('modal-sheets-config-btn');
-    const urlInput = document.getElementById('sheets-url-input');
-    const saveBtn = document.getElementById('save-sheets-config-btn');
-    const clearBtn = document.getElementById('clear-sheets-url-btn');
-    const testBtn = document.getElementById('test-sheets-connection-btn');
-    const copyScriptBtn = document.getElementById('copy-apps-script-btn');
-
-    if (urlInput && googleSheetUrl) {
-      urlInput.value = googleSheetUrl;
-    }
-    updateSheetsStatus();
-
-    function openConfig() {
-      if (urlInput) urlInput.value = googleSheetUrl;
-      if (configModal) {
-        configModal.classList.remove('hidden');
-        configModal.classList.add('flex');
-      }
-    }
-
-    function closeConfig() {
-      if (configModal) {
-        configModal.classList.add('hidden');
-        configModal.classList.remove('flex');
-      }
-    }
-
-    if (openBtn) openBtn.addEventListener('click', openConfig);
-    if (modalOpenBtn) modalOpenBtn.addEventListener('click', openConfig);
-    if (closeBtn) closeBtn.addEventListener('click', closeConfig);
-
-    if (configModal) {
-      configModal.addEventListener('click', (e) => {
-        if (e.target === configModal) closeConfig();
-      });
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        if (urlInput) urlInput.value = '';
-        googleSheetUrl = '';
-        localStorage.removeItem(GOOGLE_SHEETS_STORAGE_KEY);
-        updateSheetsStatus();
-        showToast('Google Sheet Web App URL cleared');
-      });
-    }
-
-    if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        const val = urlInput ? urlInput.value.trim() : '';
-        if (!val) {
-          showToast('Please paste a Google Apps Script Web App URL');
-          return;
-        }
-        if (!val.startsWith('https://script.google.com/macros/s/')) {
-          showToast('URL should start with https://script.google.com/macros/s/...');
-          return;
-        }
-        googleSheetUrl = val;
-        localStorage.setItem(GOOGLE_SHEETS_STORAGE_KEY, val);
-        updateSheetsStatus();
-        closeConfig();
-        showToast('✓ Google Sheet connected successfully!');
-      });
-    }
-
-    if (testBtn) {
-      testBtn.addEventListener('click', async () => {
-        const val = urlInput ? urlInput.value.trim() : '';
-        if (!val) {
-          showToast('Please enter a Web App URL first to test');
-          return;
-        }
-        testBtn.disabled = true;
-        const prevText = testBtn.innerHTML;
-        testBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Testing...';
-        try {
-          await fetch(val, { method: 'GET', mode: 'no-cors' });
-          showToast('✓ Connected to Google Apps Script endpoint successfully!');
-        } catch (e) {
-          showToast('Could not reach endpoint. Please check your deployment access.');
-        } finally {
-          testBtn.disabled = false;
-          testBtn.innerHTML = prevText;
-        }
-      });
-    }
-
-    if (copyScriptBtn) {
-      copyScriptBtn.addEventListener('click', async () => {
-        try {
-          const resp = await fetch('google_apps_script.js');
-          if (resp.ok) {
-            const code = await resp.text();
-            await navigator.clipboard.writeText(code);
-            showToast('✓ Apps Script code copied to clipboard!');
-            return;
-          }
-        } catch (err) {
-          // fallback
-        }
-        // If fetch not available (e.g. file:// protocol), open google_apps_script.js or notify
-        showToast('Code is available in google_apps_script.js in the project folder!');
-      });
     }
   }
 

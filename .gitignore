@@ -1,7 +1,7 @@
-# Environment variables and private configurations
+# Environment folder and private configurations
+env/
 .env
-.env.local
-.env.*.local
+.env.*
 env.js
 config.env
 
@@ -12,7 +12,7 @@ scratch/
 .DS_Store
 Thumbs.db
 
-# Dependencies and build outputs (if added in future)
+# Dependencies and build outputs
 node_modules/
 dist/
 build/
