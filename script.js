@@ -47,6 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btn) {
               group.querySelectorAll('.pebble-btn').forEach(b => b.classList.remove('active'));
               btn.classList.add('active');
+              const targetReadoutId = group.getAttribute('data-readout');
+              const readoutEl = targetReadoutId ? document.getElementById(targetReadoutId) : null;
+              if (readoutEl) {
+                readoutEl.textContent = btn.getAttribute('data-label') || btn.innerText.trim();
+              }
+              const parentCard = group.closest('.question-card');
+              if (parentCard) {
+                parentCard.classList.add('answered');
+              }
             }
           }
         });
@@ -750,7 +759,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const scores = {};
     for (let i = 1; i <= 12; i++) {
       const q = `f${i}`;
-      scores[q] = parseFloat(state.likertScores[q]) || 5.0;
+      const rawVal = state.likertScores[q];
+      const match = String(rawVal).match(/\d+/);
+      scores[q] = match ? parseFloat(match[0]) : 5.0;
     }
 
     const soMean = ((scores['f1'] + scores['f2'] + scores['f5'] + scores['f10']) / 4).toFixed(1);
