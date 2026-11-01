@@ -2404,14 +2404,21 @@
       </div>
 
       <!-- Right Buttons -->
-      <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full sm:w-auto shrink-0">
+        <button type="button" id="sheets-config-btn"
+          class="pebble-btn px-4 py-3 rounded-full bg-[#FAF6F0] border border-[#E6DED1] text-xs font-bold text-[#524032] hover:bg-[#F3EDE2] flex items-center gap-1.5 transition-all"
+          title="Google Sheets Connection Settings">
+          <span class="w-2 h-2 rounded-full bg-amber-500" id="sheets-status-dot"></span>
+          <span id="sheets-status-text">Google Sheet</span>
+          <span class="material-symbols-outlined text-sm text-[#8A4500]">link</span>
+        </button>
         <button type="button" id="review-btn"
-          class="pebble-btn flex-1 sm:flex-none px-6 py-3 rounded-full bg-[#FFFFFF] border border-[#E6DED1] text-xs font-bold text-[#1C140E] hover:bg-[#FAF6F0]">
+          class="pebble-btn flex-1 sm:flex-none px-5 py-3 rounded-full bg-[#FFFFFF] border border-[#E6DED1] text-xs font-bold text-[#1C140E] hover:bg-[#FAF6F0]">
           Review
         </button>
         <button type="button" id="submit-btn"
-          class="pebble-btn active flex-1 sm:flex-none px-7 py-3 rounded-full bg-[#241812] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md">
-          <span class="material-symbols-outlined text-sm">verified</span>
+          class="pebble-btn active flex-1 sm:flex-none px-6 py-3 rounded-full bg-[#241812] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md">
+          <span class="material-symbols-outlined text-sm">cloud_upload</span>
           Submit Questionnaire
         </button>
       </div>
@@ -2485,6 +2492,22 @@
         <button type="button" id="copy-token-btn"
           class="px-3 py-1 rounded-full bg-white hover:bg-[#F3EDE2] text-[#8A4500] border border-[#E6DED1] text-[11px] font-bold self-start sm:self-auto transition-all">
           Copy Token
+        </button>
+      </div>
+
+      <!-- Google Sheets Live Status Banner -->
+      <div id="modal-sheets-status-card"
+        class="flex items-center justify-between p-3 rounded-2xl bg-[#FAF6F0] border border-[#E6DED1] text-xs">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-amber-600" id="modal-sheets-icon">cloud_queue</span>
+          <div>
+            <span class="text-[#524032]">Google Sheets:</span>
+            <strong id="modal-sheets-status-label" class="text-amber-800 ml-1">Ready to Connect</strong>
+          </div>
+        </div>
+        <button type="button" id="modal-sheets-config-btn"
+          class="px-3 py-1 rounded-full bg-white hover:bg-[#F3EDE2] text-[#8A4500] border border-[#E6DED1] text-[11px] font-bold transition-all">
+          Configure
         </button>
       </div>
 
@@ -2711,6 +2734,91 @@
           <span class="module-status text-[11px] font-medium text-[#524032]">Incomplete</span>
         </a>
       </nav>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- GOOGLE SHEETS SETUP MODAL -->
+  <!-- ============================================== -->
+  <div id="sheets-config-modal"
+    class="fixed inset-0 z-50 bg-[#1C140E]/65 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5 no-print"
+    role="dialog" aria-modal="true" aria-labelledby="sheets-modal-title">
+    <div
+      class="bg-[#FFFDF9] rounded-3xl max-w-xl w-full p-5 sm:p-7 border border-[#E6DED1] shadow-2xl space-y-5 animate-scale-up max-h-[90vh] overflow-y-auto">
+
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-[#E6DED1] pb-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-2xl bg-[#E8F5E9] border border-[#C8E6C9] flex items-center justify-center text-[#2E7D32] shadow-sm">
+            <span class="material-symbols-outlined text-2xl">table_chart</span>
+          </div>
+          <div>
+            <h3 id="sheets-modal-title" class="text-lg font-serif-heading font-bold text-[#1C140E]">Connect Google Sheet</h3>
+            <p class="text-xs text-[#524032]">Direct real-time submissions via Google Apps Script</p>
+          </div>
+        </div>
+        <button type="button" id="close-sheets-modal" aria-label="Close setup modal"
+          class="w-8 h-8 rounded-full bg-[#FAF6F0] flex items-center justify-center text-[#524032] hover:bg-[#E6DED1] transition-all">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- URL Input Field -->
+      <div class="space-y-2">
+        <label for="sheets-url-input" class="text-xs font-bold text-[#1C140E] block">
+          Google Apps Script Web App URL:
+        </label>
+        <div class="relative">
+          <input type="url" id="sheets-url-input"
+            placeholder="https://script.google.com/macros/s/.../exec"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-[#E6DED1] bg-[#FFFFFF] text-xs font-mono text-[#1C140E] focus:outline-none focus:border-[#8A4500] pr-16">
+          <button type="button" id="clear-sheets-url-btn"
+            class="absolute right-2.5 top-2.5 px-2 py-0.5 text-[11px] text-[#7B3217] hover:underline font-medium">
+            Clear
+          </button>
+        </div>
+        <p class="text-[11px] text-[#524032]">
+          Paste the Web App URL generated from your Google Sheet Apps Script deployment.
+        </p>
+      </div>
+
+      <!-- Quick 3-Step Setup Guide Box -->
+      <div class="bg-[#FAF6F0] rounded-2xl p-4 border border-[#E6DED1] space-y-3 text-xs text-[#524032]">
+        <div class="font-bold text-[#1C140E] flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-[#8A4500]">help</span>
+            How to set up your Google Sheet in 30 seconds:
+          </span>
+          <button type="button" id="copy-apps-script-btn"
+            class="px-2.5 py-1 rounded-lg bg-white border border-[#E6DED1] text-[10px] font-bold text-[#8A4500] hover:bg-[#F3EDE2] transition-all flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">content_copy</span>
+            Copy Script Code
+          </button>
+        </div>
+        <ol class="list-decimal list-inside space-y-1.5 text-[11px] leading-relaxed">
+          <li>Create a blank Google Sheet at <a href="https://sheets.new" target="_blank" rel="noopener" class="text-[#8A4500] underline font-medium">sheets.new</a>.</li>
+          <li>In the menu, click <strong>Extensions &gt; Apps Script</strong>.</li>
+          <li>Click <strong>Copy Script Code</strong> button above, paste it into the editor, and click <strong>Save</strong> (💾).</li>
+          <li>Click <strong>Deploy &gt; New deployment &gt; Web app</strong>. Set <em>Who has access</em> to <strong>"Anyone"</strong> and click <strong>Deploy</strong>.</li>
+          <li>Copy the <strong>Web app URL</strong> and paste it into the box above!</li>
+        </ol>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-between gap-3 pt-2 border-t border-[#E6DED1]">
+        <button type="button" id="test-sheets-connection-btn"
+          class="px-4 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E6DED1] text-xs font-bold text-[#1C140E] hover:bg-[#FAF6F0] flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-sm">wifi_tethering</span>
+          Test Connection
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="save-sheets-config-btn"
+            class="px-6 py-2.5 rounded-full bg-[#241812] hover:bg-[#1C140E] text-white text-xs font-bold shadow-md transition-all">
+            Save &amp; Connect
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

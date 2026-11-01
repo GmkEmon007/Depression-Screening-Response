@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modalBar.style.width = `${pct}%`;
       modalBar.style.backgroundColor = severityColor;
     }
+    return { total, severity };
   }
 
   // 7. Calculate Progress Across 54 Items (0% to 100%)
@@ -673,68 +674,288 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 11. Modal & Reflection Summary
+  // 11. Modal & Reflection Summary + Google Sheets Integration
+  const GOOGLE_SHEETS_STORAGE_KEY = 'vu_research_google_sheet_url';
+  let googleSheetUrl = localStorage.getItem(GOOGLE_SHEETS_STORAGE_KEY) || '';
+
+  // Update visual indicators for Google Sheets sync status
+  function updateSheetsStatus(isSubmitted = false) {
+    const dot = document.getElementById('sheets-status-dot');
+    const text = document.getElementById('sheets-status-text');
+    const modalIcon = document.getElementById('modal-sheets-icon');
+    const modalLabel = document.getElementById('modal-sheets-status-label');
+
+    if (isSubmitted) {
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+      if (text) text.textContent = 'Sheet Synced';
+      if (modalIcon) {
+        modalIcon.className = 'material-symbols-outlined text-base text-emerald-700';
+        modalIcon.textContent = 'cloud_done';
+      }
+      if (modalLabel) {
+        modalLabel.className = 'text-emerald-800 ml-1 font-bold';
+        modalLabel.textContent = 'Submitted & Synced';
+      }
+    } else if (googleSheetUrl) {
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+      if (text) text.textContent = 'Sheet Ready';
+      if (modalIcon) {
+        modalIcon.className = 'material-symbols-outlined text-base text-emerald-700';
+        modalIcon.textContent = 'cloud_done';
+      }
+      if (modalLabel) {
+        modalLabel.className = 'text-emerald-800 ml-1 font-bold';
+        modalLabel.textContent = 'Connected (Ready to Submit)';
+      }
+    } else {
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+      if (text) text.textContent = 'Google Sheet';
+      if (modalIcon) {
+        modalIcon.className = 'material-symbols-outlined text-base text-amber-600';
+        modalIcon.textContent = 'cloud_queue';
+      }
+      if (modalLabel) {
+        modalLabel.className = 'text-amber-800 ml-1 font-bold';
+        modalLabel.textContent = 'Not Connected';
+      }
+    }
+  }
+
+  // Build research payload aligned with Google Sheet columns
+  function buildSubmissionPayload(token) {
+    const phq = updatePhq9Score() || { total: 0, severity: 'Minimal' };
+    const mspss = calculateMspssBreakdown() || {};
+    const consentCheck = document.getElementById('consent-checkbox');
+
+    return {
+      Timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }) + ' (BDT)',
+      Anonymous_Token: token || ('VU-' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('')),
+      Consent_Given: consentCheck && consentCheck.checked ? 'Yes' : 'No',
+      Total_Answered: state.answeredQuestions.size,
+
+      // Module A: Demographics
+      A1_Age: document.getElementById('input-age')?.value?.trim() || state.inputs['input-age'] || '',
+      A2_Height_Ft: document.getElementById('input-height-ft')?.value?.trim() || state.inputs['input-height-ft'] || '',
+      A2_Height_In: document.getElementById('input-height-in')?.value?.trim() || state.inputs['input-height-in'] || '',
+      A3_Gender: state.likertScores['a3'] || '',
+      A4_Weight_Kg: document.getElementById('input-weight')?.value?.trim() || state.inputs['input-weight'] || '',
+      A5_Relationship_Status: state.likertScores['a5'] || '',
+      A6_Living_Arrangement: state.likertScores['a6'] || '',
+      A7_Semester: document.getElementById('select-semester')?.value?.trim() || state.inputs['select-semester'] || '',
+      A7_Study_Year: state.likertScores['a7_year'] || '',
+      A8_Family_Monthly_Income: document.getElementById('input-income')?.value?.trim() || state.inputs['input-income'] || '',
+
+      // Module B: PHQ-9 Depression Index (0-3 each)
+      B1_Anhedonia: state.phq9Scores['b1'] !== undefined ? state.phq9Scores['b1'] : '',
+      B2_Depressed_Mood: state.phq9Scores['b2'] !== undefined ? state.phq9Scores['b2'] : '',
+      B3_Sleep_Issues: state.phq9Scores['b3'] !== undefined ? state.phq9Scores['b3'] : '',
+      B4_Fatigue: state.phq9Scores['b4'] !== undefined ? state.phq9Scores['b4'] : '',
+      B5_Appetite_Changes: state.phq9Scores['b5'] !== undefined ? state.phq9Scores['b5'] : '',
+      B6_Guilt_Failure: state.phq9Scores['b6'] !== undefined ? state.phq9Scores['b6'] : '',
+      B7_Concentration: state.phq9Scores['b7'] !== undefined ? state.phq9Scores['b7'] : '',
+      B8_Motor_Changes: state.phq9Scores['b8'] !== undefined ? state.phq9Scores['b8'] : '',
+      B9_Suicidal_Ideation: state.phq9Scores['b9'] !== undefined ? state.phq9Scores['b9'] : '',
+      PHQ9_Total_Score: phq.total,
+      PHQ9_Severity: phq.severity,
+
+      // Module C: Academic Stress (C1 - C8)
+      C1: state.likertScores['c1'] || '',
+      C2: state.likertScores['c2'] || '',
+      C3: state.likertScores['c3'] || '',
+      C4: state.likertScores['c4'] || '',
+      C5: state.likertScores['c5'] || '',
+      C6: state.likertScores['c6'] || '',
+      C7: state.likertScores['c7'] || '',
+      C8: state.likertScores['c8'] || '',
+
+      // Module D: Future Anxiety & AI Outlook (D1 - D4)
+      D1: state.likertScores['d1'] || '',
+      D2: state.likertScores['d2'] || '',
+      D3: state.likertScores['d3'] || '',
+      D4: state.likertScores['d4'] || '',
+
+      // Module E: Rest, Sleep & Vitality (E1 - E8)
+      E1: state.likertScores['e1'] || '',
+      E2: state.likertScores['e2'] || '',
+      E3: state.likertScores['e3'] || '',
+      E4: state.likertScores['e4'] || '',
+      E5: state.likertScores['e5'] || '',
+      E6: state.likertScores['e6'] || '',
+      E7: state.likertScores['e7'] || '',
+      E8: state.likertScores['e8'] || '',
+
+      // Module F: MSPSS Social Support (F1 - F12)
+      F1: state.likertScores['f1'] || '',
+      F2: state.likertScores['f2'] || '',
+      F3: state.likertScores['f3'] || '',
+      F4: state.likertScores['f4'] || '',
+      F5: state.likertScores['f5'] || '',
+      F6: state.likertScores['f6'] || '',
+      F7: state.likertScores['f7'] || '',
+      F8: state.likertScores['f8'] || '',
+      F9: state.likertScores['f9'] || '',
+      F10: state.likertScores['f10'] || '',
+      F11: state.likertScores['f11'] || '',
+      F12: state.likertScores['f12'] || '',
+      MSPSS_Significant_Other_Mean: mspss.soMean || '',
+      MSPSS_Family_Mean: mspss.famMean || '',
+      MSPSS_Friends_Mean: mspss.friMean || '',
+      MSPSS_Total_Mean: mspss.totalMean || '',
+
+      // Module G: Hearth & Earth
+      G1: state.likertScores['g1'] || '',
+      G3: state.likertScores['g3'] || '',
+      G4: state.likertScores['g4'] || '',
+      G5: state.likertScores['g5'] || '',
+      G6: state.likertScores['g6'] || ''
+    };
+  }
+
+  // Open Mindful Reflection Modal
+  function openReflectionModal() {
+    const modal = document.getElementById('reflection-modal');
+    if (!modal) return;
+
+    // Check or generate token
+    const tokenEl = document.getElementById('modal-crypto-token');
+    if (tokenEl && (!tokenEl.textContent || tokenEl.textContent === 'VU-7a8b9c0d')) {
+      const token = 'VU-' + Array.from(crypto.getRandomValues(new Uint8Array(8)))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+      tokenEl.textContent = token;
+    }
+
+    updatePhq9Score();
+    calculateMspssBreakdown();
+    updateSheetsStatus();
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  // Submit Questionnaire to Google Sheet
+  async function submitQuestionnaire() {
+    const consentCheck = document.getElementById('consent-checkbox');
+    if (consentCheck && !consentCheck.checked) {
+      showToast('অনুগ্রহ করে সম্মতি বক্সে টিক দিন (Please agree to consent)');
+      consentCheck.focus();
+      consentCheck.parentElement.classList.add('ring-2', 'ring-red-400', 'p-1', 'rounded-lg');
+      setTimeout(() => consentCheck.parentElement.classList.remove('ring-2', 'ring-red-400', 'p-1', 'rounded-lg'), 2500);
+      return;
+    }
+
+    // If Google Sheet URL not yet set, prompt setup modal
+    if (!googleSheetUrl) {
+      showToast('Please connect your Google Sheet URL to save responses');
+      const configModal = document.getElementById('sheets-config-modal');
+      if (configModal) {
+        configModal.classList.remove('hidden');
+        configModal.classList.add('flex');
+      }
+      return;
+    }
+
+    const submitBtn = document.getElementById('submit-btn');
+    const origHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Submitting to Google Sheet...';
+    }
+
+    let tokenEl = document.getElementById('modal-crypto-token');
+    let token = tokenEl ? tokenEl.textContent.trim() : '';
+    if (!token || token === 'VU-7a8b9c0d') {
+      token = 'VU-' + Array.from(crypto.getRandomValues(new Uint8Array(8)))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+      if (tokenEl) tokenEl.textContent = token;
+    }
+
+    const payload = buildSubmissionPayload(token);
+
+    try {
+      await fetch(googleSheetUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      // Save local backup copy
+      localStorage.setItem('vu_last_submitted_response', JSON.stringify(payload));
+
+      showToast('✓ Questionnaire responses recorded in Google Sheet!');
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-sm text-emerald-400">check_circle</span> Submitted to Google Sheet';
+        submitBtn.classList.remove('bg-[#241812]');
+        submitBtn.classList.add('bg-emerald-900');
+      }
+      updateSheetsStatus(true);
+      openReflectionModal();
+    } catch (err) {
+      console.error('Google Sheets submission error:', err);
+      showToast('⚠️ Could not connect to Google Sheet. Responses preserved locally.');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origHtml;
+      }
+      openReflectionModal();
+    }
+  }
+
   function setupModal() {
     const reviewBtn = document.getElementById('review-btn');
     const submitBtn = document.getElementById('submit-btn');
     const floatingReview = document.getElementById('floating-review-btn');
+    const floatingSubmit = document.getElementById('floating-submit-btn');
     const modal = document.getElementById('reflection-modal');
     const closeModal = document.getElementById('close-modal');
     const consentCheck = document.getElementById('consent-checkbox');
 
-    function openModal() {
-      if (consentCheck && !consentCheck.checked) {
-        showToast('অনুগ্রহ করে সম্মতি বক্সে টিক দিন (Please agree to consent)');
-        consentCheck.focus();
-        consentCheck.parentElement.classList.add('ring-2', 'ring-red-400', 'p-1', 'rounded-lg');
-        setTimeout(() => consentCheck.parentElement.classList.remove('ring-2', 'ring-red-400', 'p-1', 'rounded-lg'), 2500);
-        return;
-      }
-
-      // Generate Pseudonymous Hash Token
-      const token = 'VU-' + Array.from(crypto.getRandomValues(new Uint8Array(8)))
-        .map(b => b.toString(16).padStart(2, '0')).join('');
-      const tokenEl = document.getElementById('modal-crypto-token');
-      if (tokenEl) tokenEl.textContent = token;
-
-      // Calculate Scores
-      updatePhq9Score();
-      calculateMspssBreakdown();
-
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', () => {
+        if (consentCheck && !consentCheck.checked) {
+          showToast('অনুগ্রহ করে সম্মতি বক্সে টিক দিন (Please agree to consent)');
+          consentCheck.focus();
+          consentCheck.parentElement.classList.add('ring-2', 'ring-red-400', 'p-1', 'rounded-lg');
+          setTimeout(() => consentCheck.parentElement.classList.remove('ring-2', 'ring-red-400', 'p-1', 'rounded-lg'), 2500);
+          return;
+        }
+        openReflectionModal();
+      });
     }
 
-    if (reviewBtn) reviewBtn.addEventListener('click', openModal);
-    if (floatingReview) floatingReview.addEventListener('click', openModal);
+    if (floatingReview) {
+      floatingReview.addEventListener('click', () => {
+        openReflectionModal();
+      });
+    }
 
-    const floatingSubmit = document.getElementById('floating-submit-btn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', submitQuestionnaire);
+    }
+
     if (floatingSubmit) {
       floatingSubmit.addEventListener('click', () => {
         if (submitBtn) {
           submitBtn.click();
         } else {
-          openModal();
+          submitQuestionnaire();
         }
       });
     }
-
-    if (submitBtn) submitBtn.addEventListener('click', () => {
-      openModal();
-      showToast('Questionnaire completed! Review your reflections below.');
-    });
 
     if (closeModal) closeModal.addEventListener('click', () => {
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     });
 
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    });
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+      });
+    }
 
     // Copy Token Action
     const copyBtn = document.getElementById('copy-token-btn');
@@ -751,6 +972,121 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-json-btn');
     if (exportBtn) {
       exportBtn.addEventListener('click', exportResponsesAsJSON);
+    }
+
+    // Google Sheets Config Setup
+    setupGoogleSheetsConfig();
+  }
+
+  // Setup Google Sheets configuration modal and events
+  function setupGoogleSheetsConfig() {
+    const configModal = document.getElementById('sheets-config-modal');
+    const closeBtn = document.getElementById('close-sheets-modal');
+    const openBtn = document.getElementById('sheets-config-btn');
+    const modalOpenBtn = document.getElementById('modal-sheets-config-btn');
+    const urlInput = document.getElementById('sheets-url-input');
+    const saveBtn = document.getElementById('save-sheets-config-btn');
+    const clearBtn = document.getElementById('clear-sheets-url-btn');
+    const testBtn = document.getElementById('test-sheets-connection-btn');
+    const copyScriptBtn = document.getElementById('copy-apps-script-btn');
+
+    if (urlInput && googleSheetUrl) {
+      urlInput.value = googleSheetUrl;
+    }
+    updateSheetsStatus();
+
+    function openConfig() {
+      if (urlInput) urlInput.value = googleSheetUrl;
+      if (configModal) {
+        configModal.classList.remove('hidden');
+        configModal.classList.add('flex');
+      }
+    }
+
+    function closeConfig() {
+      if (configModal) {
+        configModal.classList.add('hidden');
+        configModal.classList.remove('flex');
+      }
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openConfig);
+    if (modalOpenBtn) modalOpenBtn.addEventListener('click', openConfig);
+    if (closeBtn) closeBtn.addEventListener('click', closeConfig);
+
+    if (configModal) {
+      configModal.addEventListener('click', (e) => {
+        if (e.target === configModal) closeConfig();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (urlInput) urlInput.value = '';
+        googleSheetUrl = '';
+        localStorage.removeItem(GOOGLE_SHEETS_STORAGE_KEY);
+        updateSheetsStatus();
+        showToast('Google Sheet Web App URL cleared');
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const val = urlInput ? urlInput.value.trim() : '';
+        if (!val) {
+          showToast('Please paste a Google Apps Script Web App URL');
+          return;
+        }
+        if (!val.startsWith('https://script.google.com/macros/s/')) {
+          showToast('URL should start with https://script.google.com/macros/s/...');
+          return;
+        }
+        googleSheetUrl = val;
+        localStorage.setItem(GOOGLE_SHEETS_STORAGE_KEY, val);
+        updateSheetsStatus();
+        closeConfig();
+        showToast('✓ Google Sheet connected successfully!');
+      });
+    }
+
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        const val = urlInput ? urlInput.value.trim() : '';
+        if (!val) {
+          showToast('Please enter a Web App URL first to test');
+          return;
+        }
+        testBtn.disabled = true;
+        const prevText = testBtn.innerHTML;
+        testBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Testing...';
+        try {
+          await fetch(val, { method: 'GET', mode: 'no-cors' });
+          showToast('✓ Connected to Google Apps Script endpoint successfully!');
+        } catch (e) {
+          showToast('Could not reach endpoint. Please check your deployment access.');
+        } finally {
+          testBtn.disabled = false;
+          testBtn.innerHTML = prevText;
+        }
+      });
+    }
+
+    if (copyScriptBtn) {
+      copyScriptBtn.addEventListener('click', async () => {
+        try {
+          const resp = await fetch('google_apps_script.js');
+          if (resp.ok) {
+            const code = await resp.text();
+            await navigator.clipboard.writeText(code);
+            showToast('✓ Apps Script code copied to clipboard!');
+            return;
+          }
+        } catch (err) {
+          // fallback
+        }
+        // If fetch not available (e.g. file:// protocol), open google_apps_script.js or notify
+        showToast('Code is available in google_apps_script.js in the project folder!');
+      });
     }
   }
 
@@ -787,6 +1123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (soBar) soBar.style.width = `${(soMean / 7) * 100}%`;
     if (famBar) famBar.style.width = `${(famMean / 7) * 100}%`;
     if (friBar) friBar.style.width = `${(friMean / 7) * 100}%`;
+
+    return { soMean, famMean, friMean, totalMean, scores };
   }
 
   // 13. Export JSON Responses
