@@ -11,6 +11,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const sessionStartTime = Date.now();
   const STORAGE_KEY = 'vu_research_warm_terracotta_data_v3';
   const TOTAL_CHECKPOINTS = 54;
 
@@ -676,7 +677,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 11. Modal & Reflection Summary + Google Sheets Integration
   const GOOGLE_SHEETS_STORAGE_KEY = 'vu_research_google_sheet_url';
-  let googleSheetUrl = localStorage.getItem(GOOGLE_SHEETS_STORAGE_KEY) || '';
+  const DEFAULT_SHEETS_URL = (window.__ENV__ && window.__ENV__.GOOGLE_SHEET_URL)
+    ? window.__ENV__.GOOGLE_SHEET_URL
+    : 'https://script.google.com/macros/s/AKfycbygvYuzL90x3sNCtgFYGY7CsqrXM0b2ejgeaCe8M0LAwe8y-MyMAool9R7QufxELIs1wQ/exec';
+  let googleSheetUrl = localStorage.getItem(GOOGLE_SHEETS_STORAGE_KEY) || DEFAULT_SHEETS_URL;
 
   // Update visual indicators for Google Sheets sync status
   function updateSheetsStatus(isSubmitted = false) {
@@ -726,8 +730,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const phq = updatePhq9Score() || { total: 0, severity: 'Minimal' };
     const mspss = calculateMspssBreakdown() || {};
     const consentCheck = document.getElementById('consent-checkbox');
+    const elapsedSeconds = Math.round((Date.now() - sessionStartTime) / 1000);
+
+    const b9Val = state.phq9Scores['b9'] !== undefined ? state.phq9Scores['b9'] : 0;
+    const safetyFlag = (b9Val > 0) ? 'CRITICAL_REVIEW' : 'NORMAL';
+
+    const htFt = document.getElementById('input-height-ft')?.value?.trim() || state.inputs['input-height-ft'] || '';
+    const htIn = document.getElementById('input-height-in')?.value?.trim() || state.inputs['input-height-in'] || '';
+    const formattedHeight = (htFt || htIn) ? `${htFt}'${htIn}"` : '';
 
     return {
+      // Compatibility with user's existing Google Sheet headers:
+      'Submission ID': token,
+      'Timestamp': new Date().toISOString(),
+      'PHQ-9 Score': phq.total,
+      'Safety Flag (A9)': safetyFlag,
+      'Consent': consentCheck && consentCheck.checked ? 'yes' : 'no',
+      'A1': state.phq9Scores['b1'] !== undefined ? state.phq9Scores['b1'] : '',
+      'A2': state.phq9Scores['b2'] !== undefined ? state.phq9Scores['b2'] : '',
+      'A3': state.phq9Scores['b3'] !== undefined ? state.phq9Scores['b3'] : '',
+      'A4': state.phq9Scores['b4'] !== undefined ? state.phq9Scores['b4'] : '',
+      'A5': state.phq9Scores['b5'] !== undefined ? state.phq9Scores['b5'] : '',
+      'A6': state.phq9Scores['b6'] !== undefined ? state.phq9Scores['b6'] : '',
+      'A7': state.phq9Scores['b7'] !== undefined ? state.phq9Scores['b7'] : '',
+      'A8': state.phq9Scores['b8'] !== undefined ? state.phq9Scores['b8'] : '',
+      'A9': state.phq9Scores['b9'] !== undefined ? state.phq9Scores['b9'] : '',
+      'B1_Age': document.getElementById('input-age')?.value?.trim() || state.inputs['input-age'] || '',
+      'B2_Height': formattedHeight,
+      'B3_Weight': document.getElementById('input-weight')?.value?.trim() || state.inputs['input-weight'] || '',
+      'B4_Gender': state.likertScores['a3'] || '',
+      'B5_Semester': document.getElementById('select-semester')?.value?.trim() || state.inputs['select-semester'] || '',
+      'B6_Year': state.likertScores['a7_year'] || '',
+      'B7_UniType': 'Varendra University',
+      'B8_Living': state.likertScores['a6'] || '',
+      'E1_Sleep': state.likertScores['e1'] || '',
+      'E2_Wake': state.likertScores['e2'] || '',
+      'E3_Exercise': state.likertScores['e3'] || '',
+      'E3_Minutes': state.inputs['input-exercise-min'] || 30,
+      'E4_SocialMedia': state.likertScores['e4'] || '',
+      'E5_Eating': state.likertScores['e5'] || '',
+      'E6_Substance': state.likertScores['e6'] || '',
+      'E7_Disability': state.likertScores['e7'] || '',
+      'G1_Finance': document.getElementById('input-income')?.value?.trim() || state.inputs['input-income'] || '',
+      'G2': state.likertScores['g2'] || state.likertScores['g1'] || '',
+      'G6_Event': state.likertScores['g6'] || '',
+      'Completed Seconds': elapsedSeconds,
+      'User Agent': navigator.userAgent,
+
+      // Semantic / Modern Research Columns:
       Timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }) + ' (BDT)',
       Anonymous_Token: token || ('VU-' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('')),
       Consent_Given: consentCheck && consentCheck.checked ? 'Yes' : 'No',

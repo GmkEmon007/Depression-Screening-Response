@@ -1,0 +1,18 @@
+# Environment variables and private configurations
+.env
+.env.local
+.env.*.local
+env.js
+config.env
+
+# Scratch and test files
+scratch/
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# Dependencies and build outputs (if added in future)
+node_modules/
+dist/
+build/
